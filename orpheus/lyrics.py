@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import re
-import unicodedata
+import re, unicodedata
 import MeCab
 
+kana = u'アイウエオカ-モヤユヨラ-ロワヲンヴー' # \u30c3は1モーラとカウントされるのでこちら
+small_kana = u'ァィゥェォャュョ'
 phrase_split_chars_uni = re.compile(u'[。、,.]')
-ok_chars = re.compile(u'[ア-ンーッガ-ドバ-ポァ-ォャ-ョヮ]')
-mora_pattern = re.compile(u'([ア-ンーッガ-ドバ-ポ]?[ァ-ォャ-ョヮ]?)')
+ok_chars = re.compile(u'[' + kana + small_kana + ']')
+mora_pattern = re.compile(u'([' + kana + ']?[' + small_kana + ']?)')
+special_chars = re.compile(u'[\^_=]')
 
 def split_by_mora(kana):
     return filter(lambda i: i, re.split(mora_pattern, kana))
+
+def count_mora(kana):
+    return len(split_by_mora(re.sub(special_chars, '', kana)))
 
 def insert_accent(kana, atype):
     words = split_by_mora(kana)
@@ -57,3 +62,32 @@ def analyze(text):
             temp.append(' ')
         result.append('/'.join(temp).rstrip())
     return result
+
+def divide(lyric, rhythm_tree):
+    bars = []
+
+    bar_mora = 0
+    bar = []
+
+    for word in lyric.split('/'):
+        if not word:
+            continue
+
+        if word == ' ':
+            bars.append(bar)
+            bar_mora = 0
+            bar = []
+            continue
+
+        mora = count_mora(word)
+        if bar_mora + mora > rhythm_tree.max_mora:
+            bars.append(bar)
+            bar_mora = mora
+            bar = [word]
+            continue
+        bar_mora += mora
+        bar.append(word)
+
+    if bar: bars.append(bar)
+
+    return bars
