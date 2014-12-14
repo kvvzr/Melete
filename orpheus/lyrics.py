@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import re, unicodedata
+from operator import add
 import MeCab
 
 kana = u'アイウエオカ-モヤユヨラ-ロワヲンヴー' # \u30c3は1モーラとカウントされるのでこちら
-small_kana = u'ァィゥェォャュョ'
+small_kana = u'ァィゥェォャュョヮ'
 phrase_split_chars_uni = re.compile(u'[。、,.]')
 ok_chars = re.compile(u'[' + kana + small_kana + ']')
-mora_pattern = re.compile(u'([' + kana + ']?[' + small_kana + ']?)')
-special_chars = re.compile(u'[\^_=]')
+mora_pattern = re.compile(u'([' + kana + ']?[' + small_kana + ']?[\^_]?)')
 
 def split_by_mora(kana):
     return filter(lambda i: i, re.split(mora_pattern, kana))
 
 def count_mora(kana):
-    return len(split_by_mora(re.sub(special_chars, '', kana)))
+    return len(split_by_mora(kana))
 
 def insert_accent(kana, atype):
     words = split_by_mora(kana)
@@ -91,3 +91,16 @@ def divide(lyric, rhythm_tree):
     if bar: bars.append(bar)
 
     return bars
+
+def pair(bars, rhythm_tree):
+    result = []
+    offset = 0
+    for bar in bars:
+        moras = split_by_mora(''.join(bar))
+        pattern = filter(lambda p: len(p) == len(moras), rhythm_tree.patterns)
+        if len(pattern) != 1:
+            raise
+        pattern = map(lambda o: o + offset, pattern[0])
+        result.append(zip(moras, pattern))
+        offset += rhythm_tree.division * rhythm_tree.rhythm.simple
+    return reduce(add, result)

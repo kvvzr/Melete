@@ -26,7 +26,27 @@ rhythms = [
     [0, 6, 12, 18, 24, 30, 36],
     [0, 6, 12, 18, 24, 30, 36, 42]
 ]
-rhythm_tree = Rhythm.RhythmTree(48, 1, rhythms)
+rhythm_tree = Rhythm.RhythmTree(48, 1, Rhythm.TimeSignature(4, 2), rhythms)
 lyric = u'ア^イウ/ア^イウエ/ア^イウエ_オ/ /カキク/ / /'
 bars = Lyrics.divide(lyric, rhythm_tree)
 bars.should.be.equal([[u'ア^イウ', u'ア^イウエ'], [u'ア^イウエ_オ'], [u'カキク'], []])
+
+pair = Lyrics.pair(bars, rhythm_tree)
+answer = [
+    (u'ア^', 0),
+    (u'イ', 6),
+    (u'ウ', 12),
+    (u'ア^', 18),
+    (u'イ', 24),
+    (u'ウ', 30),
+    (u'エ', 36),
+    (u'ア^', 48),
+    (u'イ', 54),
+    (u'ウ', 60),
+    (u'エ_', 72),
+    (u'オ', 84),
+    (u'カ', 96),
+    (u'キ', 108),
+    (u'ク', 120),
+]
+pair.should.be.equal(answer)

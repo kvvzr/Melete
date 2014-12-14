@@ -26,8 +26,9 @@ def compose():
                 return 'Error'
             # 本来はDBからTreeの情報を取ってくる
             rhythms = [[], [0], [0, 12], [0, 12, 24], [0, 12, 24, 36], [0, 6, 12, 24, 36], [0, 6, 12, 18, 24, 36], [0, 6, 12, 18, 24, 30, 36], [0, 6, 12, 18, 24, 30, 36, 42]]
-            rhythm_tree = Rhythm.RhythmTree(48, 1, rhythms)
-            Lyrics.divide(tune['lyric'], rhythm_tree)
+            rhythm_tree = Rhythm.RhythmTree(48, 1, Rhythm.TimeSignature(4, 2), rhythms)
+            bars = Lyrics.divide(tune['lyric'], rhythm_tree)
+            Lyrics.pair(bars, rhythm_tree)
     except ValueError:
         return 'Error'
     return 'Hello'
