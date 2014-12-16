@@ -3,6 +3,7 @@
 import re, unicodedata
 from operator import add
 import MeCab
+import orpheus.rhythm as Rhythm
 
 kana = u'アイウエオカ-モヤユヨラ-ロワヲンヴー' # \u30c3は1モーラとカウントされるのでこちら
 small_kana = u'ァィゥェォャュョヮ'
@@ -103,4 +104,4 @@ def pair(bars, rhythm_tree):
         pattern = map(lambda o: o + offset, pattern[0])
         result.append(zip(moras, pattern))
         offset += rhythm_tree.division * rhythm_tree.rhythm.simple
-    return reduce(add, result)
+    return Rhythm.Beats(rhythm_tree.division, reduce(add, result))

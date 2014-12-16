@@ -31,8 +31,7 @@ lyric = u'ア^イウ/ア^イウエ/ア^イウエ_オ/ /カキク/ / /'
 bars = Lyrics.divide(lyric, rhythm_tree)
 bars.should.be.equal([[u'ア^イウ', u'ア^イウエ'], [u'ア^イウエ_オ'], [u'カキク'], []])
 
-pair = Lyrics.pair(bars, rhythm_tree)
-answer = [
+pair = [
     (u'ア^', 0),
     (u'イ', 6),
     (u'ウ', 12),
@@ -49,4 +48,6 @@ answer = [
     (u'キ', 108),
     (u'ク', 120),
 ]
-pair.should.be.equal(answer)
+beats = Lyrics.pair(bars, rhythm_tree)
+beats.division.should.be.equal(rhythm_tree.division)
+beats.pair.should.be.equal(pair)

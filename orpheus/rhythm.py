@@ -14,3 +14,8 @@ class RhythmTree:
         lens = map(lambda r: len(r), self.patterns)
         self.min_mora = min(lens)
         self.max_mora = max(lens)
+
+class Beats:
+    def __init__(self, division, pair):
+        self.division = division
+        self.pair = pair
