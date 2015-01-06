@@ -104,5 +104,5 @@ def pair(bars, rhythm_tree):
             raise
         pattern = map(lambda o: o + offset, pattern[0])
         result.append(zip(moras, pattern))
-        offset += rhythm_tree.division * rhythm_tree.rhythm.simple
-    return Rhythm.Beats(rhythm_tree.division, reduce(add, result))
+        offset += 1
+    return Rhythm.Beats(rhythm_tree.division, offset, reduce(add, result))

@@ -26,28 +26,29 @@ rhythms = [
     [0, 6, 12, 18, 24, 30, 36],
     [0, 6, 12, 18, 24, 30, 36, 42]
 ]
-rhythm_tree = Rhythm.RhythmTree(48, 1, Rhythm.TimeSignature(4, 2), rhythms)
+rhythm_tree = Rhythm.RhythmTree(12, 1, Rhythm.TimeSignature(4, 2), rhythms)
 lyric = u'ア^イウ/ア^イウエ/ア^イウエ_オ/ /カキク/ / /'
 bars = Lyrics.divide(lyric, rhythm_tree)
 bars.should.be.equal([[u'ア^イウ', u'ア^イウエ'], [u'ア^イウエ_オ'], [u'カキク'], []])
 
 pair = [
-    (u'ア^', 0),
-    (u'イ', 6),
-    (u'ウ', 12),
-    (u'ア^', 18),
-    (u'イ', 24),
-    (u'ウ', 30),
-    (u'エ', 36),
-    (u'ア^', 48),
-    (u'イ', 54),
-    (u'ウ', 60),
-    (u'エ_', 72),
-    (u'オ', 84),
-    (u'カ', 108),
-    (u'キ', 120),
-    (u'ク', 132),
+    (u'ア^', 0.0),
+    (u'イ', 0.125),
+    (u'ウ', 0.25),
+    (u'ア^', 0.375),
+    (u'イ', 0.5),
+    (u'ウ', 0.625),
+    (u'エ', 0.75),
+    (u'ア^', 1.0),
+    (u'イ', 1.125),
+    (u'ウ', 1.25),
+    (u'エ_', 1.5),
+    (u'オ', 1.75),
+    (u'カ', 2.25),
+    (u'キ', 2.5),
+    (u'ク', 2.75),
 ]
 beats = Lyrics.pair(bars, rhythm_tree)
 beats.division.should.be.equal(rhythm_tree.division)
+beats.time.should.be.equal(4)
 beats.pair.should.be.equal(pair)

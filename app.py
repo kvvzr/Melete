@@ -13,7 +13,7 @@ def hello():
 
 @app.route('/analyze_lyrics')
 def analyze_lyrics():
-    return jsonify({"lyrics": Lyrics.analyze(request.args.get('text', default=''))})
+    return jsonify({'lyrics': Lyrics.analyze(request.args.get('text', default=''))})
 
 @app.route('/compose')
 def compose():

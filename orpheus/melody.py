@@ -2,28 +2,44 @@ import re
 import mido
 
 class Composer:
-    def __init__(self, beats, chord_prog, pitch_range, skip_prob):
+    def __init__(self, rhythm, beats, chord_prog, pitch_range, skip_prob, bpm):
+        self.rhythm = rhythm
         self.beats = beats
         self.chords = chord_prog
         self.pitch_range = pitch_range
         self.skip_prob = skip_prob
+        self.bpm = bpm
 
     def compose(self):
         notes = self.createMelody()
+        tempo = int(1000000 / (self.bpm / 60.0))
+        elapsed = 0
 
         with mido.MidiFile(ticks_per_beat=48, charset='utf-8') as midi:
-            track = mido.MidiTrack()
-            track.append(mido.MetaMessage('set_tempo', tempo=mido.bpm2tempo(240)))
-            elapsed = 0
+            melody = mido.MidiTrack()
+            melody.append(mido.MetaMessage('set_tempo', tempo=tempo))
             for t in range(len(self.beats.pair)):
-                track.append(mido.Message('note_on', note=notes[t], time=self.beats.pair[t][1] - elapsed))
-                track.append(mido.Message('note_off', note=notes[t], time=12))
-                elapsed = self.beats.pair[t][1] + 12
+                time = int(self.beats.pair[t][1] * 48 * 4 * self.rhythm.simple)
+                note_off = int(48 * 4 * self.rhythm.simple)
+                note_off = ((time + note_off) / note_off) * note_off - time
+                if t + 1 < len(self.beats.pair):
+                    note_off = min(note_off, int(self.beats.pair[t + 1][1] * 48 * 4 * self.rhythm.simple - time))
+                melody.append(mido.Message('note_on', note=notes[t], time=time - elapsed))
+                melody.append(mido.Message('note_off', note=notes[t], time=note_off))
+                elapsed = time + note_off
+            midi.tracks.append(melody)
 
-            midi.tracks.append(track)
-            midi.save('log/test5.mid')
-
-        return
+            accom = mido.MidiTrack()
+            for t in range(self.beats.time):
+                for i, s in enumerate(self.chords.current(t).sounds):
+                    accom.append(mido.Message('note_on', note=s + 12 * 5, time=0))
+                for i, s in enumerate(self.chords.current(t).sounds):
+                    offset = 0
+                    if i == 0:
+                        offset = int(48 * 4 * self.rhythm.simple)
+                    accom.append(mido.Message('note_off', note=s + 12 * 5, time=offset))
+            midi.tracks.append(accom)
+        return midi
 
     def createMelody(self):
         dp = dict((p, [0.0] * len(self.beats.pair)) for p in self.pitch_range)
@@ -46,7 +62,7 @@ class Composer:
                     chord = self.chords.current(pair[1])
                     prob = dp[p][t]
 
-                    if np in chord.sounds:
+                    if p % 12 in map(lambda s: s % 12, chord.sounds):
                         prob *= 0.9
                     else:
                         prob *= 0.1
@@ -81,3 +97,33 @@ class Composer:
             last_pitch = trace[last_pitch][t]
 
         return list(reversed(notes))
+
+def concatMidi(head, tail):
+    time = 0
+    for i, track in enumerate(head.tracks):
+        track_time = 0
+        for message in track:
+            if hasattr(message, 'time'):
+                track_time += message.time
+        time = max(track_time, time)
+
+    with mido.MidiFile(ticks_per_beat=48, charset='utf-8') as midi:
+        for i in range(max(len(head.tracks), len(tail.tracks))):
+            track = mido.MidiTrack()
+            elapsed = 0
+
+            if i < len(head.tracks):
+                for message in head.tracks[i]:
+                    if message.type in ['note_on', 'note_off', 'set_tempo']:
+                        track.append(message)
+                        elapsed += message.time
+
+            if i < len(tail.tracks):
+                for j, message in enumerate(tail.tracks[i]):
+                    if message.type in ['note_on', 'note_off', 'set_tempo']:
+                        if j == 0:
+                            message.time += (time - elapsed)
+                        track.append(message)
+            midi.tracks.append(track)
+
+    return midi

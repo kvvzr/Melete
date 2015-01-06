@@ -3,30 +3,36 @@
 import os, sys
 sys.path.append(os.getcwd())
 
-from pprint import pprint
-import uniout
+from datetime import datetime as dt
+import mido
 import sure
 import orpheus.lyrics as Lyrics
 import orpheus.rhythm as Rhythm
 import orpheus.chord as Chord
 import orpheus.melody as Melody
 
-rhythms = [[0], [0, 24], [12, 24, 36], [0, 12, 24, 36]]
-tree = Rhythm.RhythmTree(48, 1, Rhythm.TimeSignature(4, 2), rhythms)
+ts = Rhythm.TimeSignature(4, 2)
+rhythms = [[0], [0, 96], [48, 96, 144], [0, 48, 96, 144]]
+tree = Rhythm.RhythmTree(48, 1, ts, rhythms)
 
-text = u'あるう ひ もりのな か くまさん に であっ た ' * 2
+text = u'ぽよぽよぽよぽよぽよぽよぽよぽよ===あるう ひ もりのな か くまさん に であっ た'
 lyrics = Lyrics.analyze(text)
 lyrics = map(lambda l: Lyrics.divide(l, tree), lyrics)
 beats = map(lambda l: Lyrics.pair(l, tree), lyrics)
 
 f7 = Chord.Chord.fromName('FM7')
 gd7 = Chord.Chord.fromName('G7')
-em7 = Chord.Chord.fromName('Em7')
+gd7.inversion(1)
+em7 = Chord.Chord.fromName('E7')
 am = Chord.Chord.fromName('Am')
-prog = Chord.ChordProg(48, 4, [(f7, 0), (gd7, 48), (em7, 96), (am, 144)])
+am.inversion(1)
+prog = Chord.ChordProg(48, 4, [(f7, 0), (gd7, 192), (em7, 384), (am, 576)])
 
 note_range = range(Chord.Scale.fromName('C4').note, Chord.Scale.fromName('A5').note)
 
-for beat in beats:
-    composer = Melody.Composer(beat, prog, note_range, 0.5)
-    composer.compose()
+with mido.MidiFile(ticks_per_beat=48, charset='utf-8') as midi:
+    for beat in beats:
+        composer = Melody.Composer(ts, beat, prog, note_range, 0.5, 180)
+        midi = Melody.concatMidi(midi, composer.compose())
+
+midi.save('log/test_' + dt.now().strftime('%Y-%m-%d_%H:%M:%S') + '.mid')

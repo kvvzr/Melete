@@ -22,6 +22,11 @@ class Chord:
         if chord_type == 'M7':
             self.sounds.extend([root, root + 4, root + 7, root + 11])
 
+    def inversion(self, count):
+        for i in range(count):
+            sound = self.sounds.pop()
+            self.sounds.insert(0, sound - 12)
+
     @classmethod
     def fromName(self, name):
         match = re.match(chord_pattern, name)
@@ -40,10 +45,10 @@ class ChordProg:
     def __init__(self, division, time, pair):
         self.division = division
         self.time = time
-        self.pair = pair
+        self.pair = map(lambda p: (p[0], float(p[1]) / (division * 4)), pair)
 
     def current(self, elapsed):
-        elapsed = elapsed % (self.division * self.time)
+        elapsed = elapsed % self.time
         for (chord, offset) in reversed(self.pair):
             if offset <= elapsed:
                 return chord
@@ -64,5 +69,5 @@ class Scale:
             root += 1
         elif accidental == u'♭':
             root -= 1
-        octave = int(match.group('octave')) + 1
+        octave = int(match.group('octave')) + 2
         return Scale(root + octave * 12)
