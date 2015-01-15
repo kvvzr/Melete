@@ -15,8 +15,6 @@ tree = Rhythm.RhythmTree(48, 1, Rhythm.TimeSignature(4, 2), rhythms)
 tree.min_mora.should.be.equal(0)
 tree.max_mora.should.be.equal(4)
 tree.patterns.should.be.equal([[], [0.0], [0.0, 0.5], [0.0, 0.25, 0.5], [0.0, 0.25, 0.5, 0.75]])
-tree.to_dict()
-
 rhythms = [[], [0], [0, 48], [0, 24, 48], [0, 24, 48, 72]]
 tree = Rhythm.RhythmTree(48, 1, Rhythm.TimeSignature(2, 2), rhythms)
 tree.min_mora.should.be.equal(0)

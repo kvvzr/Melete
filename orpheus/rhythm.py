@@ -11,12 +11,16 @@ class TimeSignature:
             'simple': self.simple
         }
 
+    @classmethod
+    def from_dict(self, data):
+        return TimeSignature(data['nn'], data['dd'])
+
 class RhythmTree:
-    def __init__(self, division, bar_count, rhythm, patterns):
+    def __init__(self, division, time, rhythm, patterns):
         self.division = division
-        self.bar_count = bar_count
+        self.time = time
         self.rhythm = rhythm
-        self.patterns = map(lambda pattern: map(lambda p: float(p) / (division * 4 * bar_count * rhythm.simple), pattern), patterns)
+        self.patterns = map(lambda pattern: map(lambda p: float(p) / (division * 4 * time * rhythm.simple), pattern), patterns)
 
         lens = map(lambda r: len(r), self.patterns)
         self.min_mora = min(lens)
@@ -25,20 +29,28 @@ class RhythmTree:
     def to_dict(self):
         return {
             'division': self.division,
-            'bar_count': self.bar_count,
+            'time': self.time,
             'rhythm': self.rhythm.to_dict(),
             'patterns': self.patterns
         }
 
+    @classmethod
+    def from_dict(self, data):
+        return RhythmTree(data['division'], data['time'], data['rhythm'], data['patterns'])
+
 class Beats:
-    def __init__(self, division, time, pair):
+    def __init__(self, division, time, pairs):
         self.division = division
         self.time = time
-        self.pair = pair
+        self.pairs = pairs
 
     def to_dict(self):
         return {
             'division': self.division,
             'time': self.time,
-            'pair': self.pair
+            'pairs': self.pairs
         }
+
+    @classmethod
+    def from_dict(self, data):
+        return Beats(data['division'], data['time'], data['pairs'])

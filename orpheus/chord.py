@@ -23,6 +23,9 @@ class Chord:
         if chord_type == 'M7':
             self.sounds.extend([root, root + 4, root + 7, root + 11])
 
+    def __eq__(self, other):
+        return 
+
     def inversion(self, count):
         for i in range(count):
             sound = self.sounds.pop()
@@ -34,6 +37,12 @@ class Chord:
             'chord_type': self.chord_type,
             'sounds': self.sounds
         }
+
+    @classmethod
+    def from_dict(self, data):
+        chord = Chord(data['root'], data['chord_type'])
+        chord.sounds = data['sounds']
+        return chord
 
     @classmethod
     def from_name(self, name):
@@ -50,14 +59,14 @@ class Chord:
         return Chord(root, chord_type)
 
 class ChordProg:
-    def __init__(self, division, time, pair):
+    def __init__(self, division, time, pairs):
         self.division = division
         self.time = time
-        self.pair = map(lambda p: (p[0], float(p[1]) / (division * 4)), pair)
+        self.pairs = map(lambda p: (p[0], float(p[1]) / (division * 4)), pairs)
 
     def current(self, elapsed):
         elapsed = elapsed % self.time
-        for (chord, offset) in reversed(self.pair):
+        for (chord, offset) in reversed(self.pairs):
             if offset <= elapsed:
                 return chord
         return None
@@ -66,9 +75,16 @@ class ChordProg:
         return {
             'division': self.division,
             'time': self.time,
-            'chords': map(lambda p: p[0], self.pair),
-            'offsets': map(lambda p: p[1], self.pair)
+            'chords': map(lambda p: p[0], self.pairs),
+            'offsets': map(lambda p: p[1], self.pairs)
         }
+
+    @classmethod
+    def from_dict(self, data):
+        pairs = zip(data['chords'], data['offsets'])
+        prog =  ChordProg(data['division'], data['time'], [])
+        prog.pairs = pairs
+        return prog
 
 class Scale:
     def __init__(self, note):
@@ -76,8 +92,12 @@ class Scale:
 
     def to_dict(self):
         return {
-                'note': self.note
+            'note': self.note
         }
+
+    @classmethod
+    def from_dict(self, data):
+        return Scale(data['note'])
 
     @classmethod
     def from_name(self, name):

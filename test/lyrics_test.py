@@ -51,4 +51,4 @@ pair = [
 beats = Lyrics.pair(bars, rhythm_tree)
 beats.division.should.be.equal(rhythm_tree.division)
 beats.time.should.be.equal(4)
-beats.pair.should.be.equal(pair)
+beats.pairs.should.be.equal(pair)
