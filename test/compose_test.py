@@ -15,24 +15,24 @@ ts = Rhythm.TimeSignature(4, 2)
 rhythms = [[0], [0, 96], [48, 96, 144], [0, 48, 96, 144]]
 tree = Rhythm.RhythmTree(48, 1, ts, rhythms)
 
-text = u'ぽよぽよぽよぽよぽよぽよぽよぽよ===あるう ひ もりのな か くまさん に であっ た'
+text = u'ぽよぽよぽよぽよぽよぽよぽよぽよ===あるう ひ もりのな か くまさん に であっ た あるう ひ もりのな か くまさん に であっ た'
 lyrics = Lyrics.analyze(text)
 lyrics = map(lambda l: Lyrics.divide(l, tree), lyrics)
 beats = map(lambda l: Lyrics.pair(l, tree), lyrics)
 
-f7 = Chord.Chord.fromName('FM7')
-gd7 = Chord.Chord.fromName('G7')
+f7 = Chord.Chord.from_name('FM7')
+gd7 = Chord.Chord.from_name('G7')
 gd7.inversion(1)
-em7 = Chord.Chord.fromName('E7')
-am = Chord.Chord.fromName('Am')
+em7 = Chord.Chord.from_name('E7')
+am = Chord.Chord.from_name('Am')
 am.inversion(1)
 prog = Chord.ChordProg(48, 4, [(f7, 0), (gd7, 192), (em7, 384), (am, 576)])
 
-note_range = range(Chord.Scale.fromName('C4').note, Chord.Scale.fromName('A5').note)
+note_range = range(Chord.Scale.from_name('C4').note, Chord.Scale.from_name('A5').note)
 
 with mido.MidiFile(ticks_per_beat=48, charset='utf-8') as midi:
     for beat in beats:
         composer = Melody.Composer(ts, beat, prog, note_range, 0.5, 180)
-        midi = Melody.concatMidi(midi, composer.compose())
+        midi = Melody.concat_midi(midi, composer.compose())
 
 midi.save('log/test_' + dt.now().strftime('%Y-%m-%d_%H:%M:%S') + '.mid')

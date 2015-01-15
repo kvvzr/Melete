@@ -11,7 +11,7 @@ class Composer:
         self.bpm = bpm
 
     def compose(self):
-        notes = self.createMelody()
+        notes = self.create_melody()
         tempo = int(1000000 / (self.bpm / 60.0))
         elapsed = 0
 
@@ -41,7 +41,7 @@ class Composer:
             midi.tracks.append(accom)
         return midi
 
-    def createMelody(self):
+    def create_melody(self):
         dp = dict((p, [0.0] * len(self.beats.pair)) for p in self.pitch_range)
         trace = dict((p, [None] * len(self.beats.pair)) for p in self.pitch_range)
 
@@ -98,7 +98,7 @@ class Composer:
 
         return list(reversed(notes))
 
-def concatMidi(head, tail):
+def concat_midi(head, tail):
     time = 0
     for i, track in enumerate(head.tracks):
         track_time = 0

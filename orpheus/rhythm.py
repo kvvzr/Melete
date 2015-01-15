@@ -4,6 +4,13 @@ class TimeSignature:
         self.dd = dd
         self.simple = nn / 2.0 ** dd
 
+    def to_dict(self):
+        return {
+            'nn': self.nn,
+            'dd': self.dd,
+            'simple': self.simple
+        }
+
 class RhythmTree:
     def __init__(self, division, bar_count, rhythm, patterns):
         self.division = division
@@ -15,8 +22,23 @@ class RhythmTree:
         self.min_mora = min(lens)
         self.max_mora = max(lens)
 
+    def to_dict(self):
+        return {
+            'division': self.division,
+            'bar_count': self.bar_count,
+            'rhythm': self.rhythm.to_dict(),
+            'patterns': self.patterns
+        }
+
 class Beats:
     def __init__(self, division, time, pair):
         self.division = division
         self.time = time
         self.pair = pair
+
+    def to_dict(self):
+        return {
+            'division': self.division,
+            'time': self.time,
+            'pair': self.pair
+        }

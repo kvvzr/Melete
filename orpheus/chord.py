@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from flask import jsonify
 
 roots = 'C-D-EF-G-A-B'
 chord_pattern = re.compile(u'(?P<root>[CDEFGAB])(?P<accidental>[♯♭])?(?P<type>\w+)?')
@@ -27,8 +28,15 @@ class Chord:
             sound = self.sounds.pop()
             self.sounds.insert(0, sound - 12)
 
+    def to_dict(self):
+        return {
+            'root': self.root,
+            'chord_type': self.chord_type,
+            'sounds': self.sounds
+        }
+
     @classmethod
-    def fromName(self, name):
+    def from_name(self, name):
         match = re.match(chord_pattern, name)
         if not match:
             return None
@@ -54,12 +62,25 @@ class ChordProg:
                 return chord
         return None
 
+    def to_dict(self):
+        return {
+            'division': self.division,
+            'time': self.time,
+            'chords': map(lambda p: p[0], self.pair),
+            'offsets': map(lambda p: p[1], self.pair)
+        }
+
 class Scale:
     def __init__(self, note):
         self.note = note
 
+    def to_dict(self):
+        return {
+                'note': self.note
+        }
+
     @classmethod
-    def fromName(self, name):
+    def from_name(self, name):
         match = re.match(scale_pattern, name)
         if not match:
             return None
