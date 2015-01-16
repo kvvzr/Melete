@@ -11,6 +11,42 @@ import orpheus.chord as Chord
 import orpheus.melody as Melody
 
 # router
+@app.route('/')
+def index():
+    pass
+
+@app.route('/watch/<int:id>')
+def watch(id):
+    pass
+
+@app.route('/users/<name>')
+def users(name):
+    pass
+
+@app.route('/rhythms/<int:id>')
+def rhythms(id):
+    pass
+
+@app.route('/chords/<int:id>')
+def chords(id):
+    pass
+
+@app.route('/accoms/<int:id>')
+def accoms(id):
+    pass
+
+@app.route('/ranking')
+def ranking():
+    pass
+
+@app.route('/login')
+def login():
+    pass
+
+@app.route('/sign_up')
+def sign_up():
+    pass
+
 @app.route('/analyze_lyrics')
 def analyze_lyrics():
     return jsonify({'lyrics': Lyrics.analyze(request.args.get('text', default=''))})
@@ -50,10 +86,10 @@ def compose():
                 composer = Melody.Composer(ts, beats, prog, note_range, skip_prob, bpm)
                 midi = Melody.concat_midi(midi, composer.compose())
         midi.save('log/test_' + dt.now().strftime('%Y-%m-%d_%H:%M:%S') + '.mid')
-    except ValueError as e:
-        return 'ValueError %s' % e
-    except KeyError as e:
-        return 'KeyError %s' % e
+    except ValueError:
+        return 'ValueError'
+    except KeyError:
+        return 'KeyError'
     return 'Hello'
 
 if __name__ == '__main__':
