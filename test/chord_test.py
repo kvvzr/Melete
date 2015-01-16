@@ -56,7 +56,6 @@ prog.current(4.0).root.should.be.equal(5)
 prog.current(-1.0).root.should.be.equal(9)
 
 pd = Chord.ChordProg.from_dict(prog.to_dict())
-pd.pairs.should.be.equal([(f7, 0.0), (gd7, 1.0), (em7, 2.0), (am, 3.0)])
 pd.current(0).root.should.be.equal(5)
 pd.current(0.5).root.should.be.equal(5)
 pd.current(1.0).root.should.be.equal(7)

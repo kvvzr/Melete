@@ -20,11 +20,10 @@ class Chord:
             self.sounds.extend([root, root + 3, root + 6])
         if chord_type == '7':
             self.sounds.extend([root, root + 4, root + 7, root + 10])
+        if chord_type == 'm7':
+            self.sounds.extend([root, root + 3, root + 7, root + 10])
         if chord_type == 'M7':
             self.sounds.extend([root, root + 4, root + 7, root + 11])
-
-    def __eq__(self, other):
-        return 
 
     def inversion(self, count):
         for i in range(count):
@@ -75,13 +74,14 @@ class ChordProg:
         return {
             'division': self.division,
             'time': self.time,
-            'chords': map(lambda p: p[0], self.pairs),
+            'chords': map(lambda p: p[0].to_dict(), self.pairs),
             'offsets': map(lambda p: p[1], self.pairs)
         }
 
     @classmethod
     def from_dict(self, data):
-        pairs = zip(data['chords'], data['offsets'])
+        chords = map(lambda c: Chord.from_dict(c), data['chords'])
+        pairs = zip(chords, data['offsets'])
         prog =  ChordProg(data['division'], data['time'], [])
         prog.pairs = pairs
         return prog

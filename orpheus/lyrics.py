@@ -5,8 +5,10 @@ from operator import add
 import MeCab
 import orpheus.rhythm as Rhythm
 
-kana = u'アイウエオカ-モヤユヨラ-ロワヲンヴー' # \u30c3は1モーラとカウントされるのでこちら
-small_kana = u'ァィゥェォャュョヮ'
+# kana = u'アイウエオカ-モヤユヨラ-ロワヲンヴー' # \u30c3は1モーラとカウントされるのでこちら
+kana = u'\u30a2\u30a4\u30a6\u30a8\u30aa-\u30e2\u30e4\u30e6\u30e8-\u30ed\u30ef-\u30f4\u30fc' # \u30c3は1モーラとカウントされるのでこちら
+# small_kana = u'ァィゥェォャュョヮ'
+small_kana = u'\u30a1\u30a3\u30a5\u30a7\u30a7\u30e3\u30e5\u30e7\u30ee'
 phrase_split_chars_uni = re.compile(u'[。、,.]')
 ok_chars = re.compile(u'[' + kana + small_kana + ']')
 mora_pattern = re.compile(u'([' + kana + ']?[' + small_kana + ']?[\^_]?)')

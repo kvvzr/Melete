@@ -21,10 +21,17 @@ class RhythmTree:
         self.time = time
         self.rhythm = rhythm
         self.patterns = map(lambda pattern: map(lambda p: float(p) / (division * 4 * time * rhythm.simple), pattern), patterns)
+        self.min_mora = 0
+        self.max_mora = 0
+        self.calc_mora()
 
+    def calc_mora(self):
         lens = map(lambda r: len(r), self.patterns)
-        self.min_mora = min(lens)
-        self.max_mora = max(lens)
+        if len(lens) > 0:
+            self.min_mora = min(lens)
+            self.max_mora = max(lens)
+            print self.max_mora
+            print self.min_mora
 
     def to_dict(self):
         return {
@@ -36,7 +43,10 @@ class RhythmTree:
 
     @classmethod
     def from_dict(self, data):
-        return RhythmTree(data['division'], data['time'], data['rhythm'], data['patterns'])
+        tree = RhythmTree(data['division'], data['time'], TimeSignature.from_dict(data['rhythm']), [])
+        tree.patterns = data['patterns']
+        tree.calc_mora()
+        return tree
 
 class Beats:
     def __init__(self, division, time, pairs):

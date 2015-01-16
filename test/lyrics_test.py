@@ -8,6 +8,7 @@ import orpheus.lyrics as Lyrics
 import orpheus.rhythm as Rhythm
 
 Lyrics.split_by_mora(u'ニャーンカッパ').should.be.equal([u'ニャ', u'ー', u'ン', u'カ', u'ッ', u'パ'])
+Lyrics.split_by_mora(u'ニャ_ーン^カッ_パ').should.be.equal([u'ニャ_', u'ー', u'ン^', u'カ', u'ッ_', u'パ'])
 
 Lyrics.insert_accent(u'ハシ', 1).should.be.equal(u'ハ_シ')
 Lyrics.insert_accent(u'ハシ', 2).should.be.equal(u'ハ^シ_')

@@ -19,25 +19,25 @@ def analyze_lyrics():
 def compose():
     try:
         data = json.loads(request.args.get('data', default=''))
+
         if not isinstance(data, list):
             return 'Error'
+
         with mido.MidiFile(ticks_per_beat=48, charset='utf-8') as midi:
             for tune in data:
                 pass
                 ts = Rhythm.TimeSignature(int(tune['nn']), int(tune['dd']))
-                # 本来はDBから情報を取ってくる
-                # chord_id = tune['chord_id']
-                f7 = Chord.Chord.fromName('FM7')
-                gd7 = Chord.Chord.fromName('G7')
-                gd7.inversion(1)
-                em7 = Chord.Chord.fromName('E7')
-                am = Chord.Chord.fromName('Am')
-                am.inversion(1)
-                prog = Chord.ChordProg(48, 4, [(f7, 0), (gd7, 192), (em7, 384), (am, 576)])
+                chord_id = tune['chord_id']
+                chords_db = Chords.query.filter_by(id=chord_id).first()
+                if not chords_db:
+                    return 'Chords DB Error'
+                prog = Chord.ChordProg.from_dict(json.loads(chords_db.data))
 
-                # rhythm_id = tune['rhythm_id']
-                rhythms = [[], [0], [0, 12], [0, 12, 24], [0, 12, 24, 36], [0, 6, 12, 24, 36], [0, 6, 12, 18, 24, 36], [0, 6, 12, 18, 24, 30, 36], [0, 6, 12, 18, 24, 30, 36, 42]]
-                rhythm_tree = Rhythm.RhythmTree(12, 1, ts, rhythms)
+                rhythm_id = tune['rhythm_id']
+                rhythms_db = Rhythms.query.filter_by(id=rhythm_id).first()
+                if not rhythms_db:
+                    return 'Rhythms DB Error'
+                rhythm_tree = Rhythm.RhythmTree.from_dict(json.loads(rhythms_db.data))
 
                 note_range = range(int(tune['min_note']), int(tune['max_note']))
 
@@ -48,12 +48,12 @@ def compose():
                 beats = Lyrics.pair(bars, rhythm_tree)
 
                 composer = Melody.Composer(ts, beats, prog, note_range, skip_prob, bpm)
-                midi = Melody.concatMidi(midi, composer.compose())
+                midi = Melody.concat_midi(midi, composer.compose())
         midi.save('log/test_' + dt.now().strftime('%Y-%m-%d_%H:%M:%S') + '.mid')
-    except ValueError:
-        return 'ValueError'
-    except KeyError:
-        return 'KeyError'
+    except ValueError as e:
+        return 'ValueError %s' % e
+    except KeyError as e:
+        return 'KeyError %s' % e
     return 'Hello'
 
 if __name__ == '__main__':
