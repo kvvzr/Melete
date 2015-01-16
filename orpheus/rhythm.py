@@ -30,8 +30,6 @@ class RhythmTree:
         if len(lens) > 0:
             self.min_mora = min(lens)
             self.max_mora = max(lens)
-            print self.max_mora
-            print self.min_mora
 
     def to_dict(self):
         return {
