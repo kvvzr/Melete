@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang='ja'>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <title>自動作曲システム Orpheus</title>
+
+        <link href='/static/lib/bootstrap/css/bootstrap.min.css' rel='stylesheet'>
+        <link rel='stylesheet' href='/static/styles/normalize.css' type='text/css' />
+        <link rel='stylesheet' href='/static/styles/style.css' type='text/css' />
+
+        <script src='/static/lib/jquery-2.1.3.min.js'></script>
+        <script src='/static/lib/micro-templating.js'></script>
+        <script src='/static/lib/bootstrap/js/bootstrap.min.js'></script>
+        <script src='/static/lib/bootstrap-select/bootstrap-select.js'></script>
+        <script src='/static/js/composer.js'></script>
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'></script>
+            <script src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js'></script>
+            <![endif]-->
+    </head>
+    <body style='padding-top: 51px'>
+        <div class='navbar navbar-default navbar-fixed-top'>
+            <div class='navbar-header'>
+                <button class='navbar-toggle' data-toggle='collapse' data-target='.target'>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                </button>
+                <a class='navbar-brand' href=''>自動作曲システム</a>
+            </div>
+            <div class='collapse navbar-collapse target'>
+                <ul class='nav navbar-nav'>
+                    <li><a href=''>作曲</a></li>
+                    <li><a href=''>新着投稿</a></li>
+                    <li><a href=''>ランキング</a></li>
+                </ul>
+                <form class='navbar-form navbar-left' role='search'>
+                    <div class='form-group'>
+                        <input type='text' class='form-control' placeholder='作品を検索'>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class='container' style='width: 100%'>
+            <div id='composer' class='carousel slide' data-ride='carousel' data-interval=''>
+                <div class='carousel-inner'>
+                    <div class='item active col-sm-10 col-sm-offset-1'>
+                        <input id='music-title' class='form-control lyrics_form' placeholder='タイトル'></textarea>
+                        <textarea id='music-lyrics' class='form-control lyrics_form' rows='5' placeholder='歌詞'></textarea>
+                        <button id='btn-analyze' class='btn pull-right btn-lg btn-primary'>詳細設定</button>
+                    </div>
+                    <div class='item col-sm-10 col-sm-offset-1'>
+                        <div id='tune-details'>
+                        </div>
+                        <button class='btn btn-lg btn-primary' href='#composer' data-slide='prev'>戻る</button>
+                        <button id='btn-compose' class='btn pull-right btn-lg btn-primary'>作曲</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script type='text/html' id='template-tunes'>
+<% for (var i = 0; i < tunes.length; i++) { %>
+<div class="row tune-detail">
+<div class="col-sm-4 lyrics_form">
+<p style="display: inline;">コード進行</p>
+<select class="selectpicker">
+<option>王道進行</option>
+</select>
+<br />
+<p style="display: inline;">リズム</p>
+<select class="selectpicker">
+<option>リズム形1</option>
+</select>
+<br />
+<p style="display: inline;">音域上限</p>
+<select class="selectpicker">
+<option>hiA</option>
+</select>
+<br />
+<p style="display: inline;">音域下限</p>
+<select class="selectpicker">
+<option>mid2C</option>
+</select>
+<br />
+<p style="display: inline;">BPM</p>
+<input class="form-control" type="number" value="120">
+<br />
+</div>
+<div class="col-sm-4">
+<textarea class="form-control lyrics_form tune-lyric" rows="10" placeholder="歌詞"><%=tunes[i].lyric%></textarea>
+</div>
+<div class="col-sm-4">
+<textarea class="form-control lyrics_form tune-phoneme" rows="10" placeholder="音韻"><%=tunes[i].phoneme%></textarea>
+</div>
+</div>
+<% } %>
+</script>
+

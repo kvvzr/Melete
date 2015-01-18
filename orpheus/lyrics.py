@@ -30,7 +30,7 @@ def insert_accent(kana, atype):
     return ''.join(words)
 
 def analyze(text):
-    result = []
+    results = []
     mecab = MeCab.Tagger('-Ounidic')
 
     # 小節単位に分割
@@ -64,8 +64,8 @@ def analyze(text):
                         prono = insert_accent(prono, atypes[0])
                     temp.append(prono)
             temp.append(' ')
-        result.append('/'.join(temp).rstrip())
-    return result
+        results.append({'lyric': phrase, 'phoneme': '/'.join(temp).rstrip()})
+    return results
 
 def divide(lyric, rhythm_tree):
     bars = []
