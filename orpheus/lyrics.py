@@ -37,12 +37,12 @@ def analyze(text):
     text = text.strip()
     text = re.sub(phrase_split_chars_uni, ' ', text)
     text = text.encode('utf-8').replace('\r\n', '\n').replace('\n', ' ')
-    lyrics = text.split('===')
-    lyrics = map(lambda p: p.strip(), lyrics)
-    lyrics = map(lambda p: p.split(' '), lyrics)
+    text = text.split('===')
+    text = map(lambda p: p.strip(), text)
+    lyrics = map(lambda p: p.split(' '), text)
 
     # 読みとアクセントの解析
-    for phrases in lyrics:
+    for i, phrases in enumerate(lyrics):
         temp = []
         for phrase in phrases:
             for word in mecab.parse(phrase).decode('utf-8').split('\n'):
@@ -64,7 +64,7 @@ def analyze(text):
                         prono = insert_accent(prono, atypes[0])
                     temp.append(prono)
             temp.append(' ')
-        results.append({'lyric': phrase, 'phoneme': '/'.join(temp).rstrip()})
+        results.append({'lyric': text[i], 'phoneme': '/'.join(temp).rstrip()})
     return results
 
 def divide(lyric, rhythm_tree):

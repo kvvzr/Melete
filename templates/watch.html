@@ -51,60 +51,11 @@
             </div>
         </div>
         <div class='container' style='width: 100%'>
-            <div id='composer' class='carousel slide' data-ride='carousel' data-interval=''>
-                <div class='carousel-inner'>
-                    <div class='item active col-sm-10 col-sm-offset-1'>
-                        <input id='music-title' class='form-control lyrics_form' placeholder='タイトル'></textarea>
-                        <textarea id='music-lyrics' class='form-control lyrics_form' rows='5' placeholder='歌詞'></textarea>
-                        <button id='btn-analyze' class='btn pull-right btn-lg btn-primary'>詳細設定</button>
-                    </div>
-                    <div class='item col-sm-10 col-sm-offset-1'>
-                        <div id='tune-details'>
-                        </div>
-                        <button class='btn btn-lg btn-primary' href='#composer' data-slide='prev'>戻る</button>
-                        <button id='btn-compose' class='btn pull-right btn-lg btn-primary'>作曲</button>
-                    </div>
-                </div>
+            <div class='col-sm-10 col-sm-offset-1'>
+                <h1>{{ title }}</h1>
+                <p style='background: #eee'>{{ lyrics }}</p>
+                <audio src='/media/{{ path }}' controls>
             </div>
         </div>
     </body>
 </html>
-
-<script type='text/html' id='template-tunes'>
-<% for (var i = 0; i < tunes.length; i++) { %>
-<div class="row tune-detail">
-<div class="col-sm-4 lyrics_form">
-<p style="display: inline;">コード進行</p>
-<select class="selectpicker">
-<option>王道進行</option>
-</select>
-<br />
-<p style="display: inline;">リズム</p>
-<select class="selectpicker">
-<option>リズム形1</option>
-</select>
-<br />
-<p style="display: inline;">音域上限</p>
-<select class="selectpicker">
-<option>hiA</option>
-</select>
-<br />
-<p style="display: inline;">音域下限</p>
-<select class="selectpicker">
-<option>mid2C</option>
-</select>
-<br />
-<p style="display: inline;">BPM</p>
-<input class="form-control tune-bpm" type="number" value="120">
-<br />
-</div>
-<div class="col-sm-4">
-<textarea class="form-control lyrics_form tune-lyric" rows="10" placeholder="歌詞"><%=tunes[i].lyric%></textarea>
-</div>
-<div class="col-sm-4">
-<textarea class="form-control lyrics_form tune-phoneme" rows="10" placeholder="音韻"><%=tunes[i].phoneme%></textarea>
-</div>
-</div>
-<% } %>
-</script>
-

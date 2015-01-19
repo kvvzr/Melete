@@ -27,12 +27,13 @@
                     nn: 4,
                     dd: 2,
                     skip_prob: 0.5,
-                    bpm: 120,
+                    bpm: $('.tune-bpm', tune).val(),
                     min_note: 72,
                     max_note: 93
                 });
             });
-            $.post('/compose', {title: $('#music-title').val(), data: JSON.stringify(data)}).done(function() {
+            $.post('/compose', {title: $('#music-title').val(), data: JSON.stringify(data)}).done(function(data) {
+                location.href = '/watch/' + data.music_id;
             });
         });
     });

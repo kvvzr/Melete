@@ -6,7 +6,7 @@ import os
 import string
 import random
 from datetime import datetime as dt
-from flask import request, json, jsonify, render_template
+from flask import request, json, jsonify, render_template, send_from_directory
 import mido
 import orpheus.lyrics as Lyrics
 import orpheus.rhythm as Rhythm
@@ -20,7 +20,17 @@ def index():
 
 @app.route('/watch/<int:id>')
 def watch(id):
-    pass
+    music = Musics.query.filter_by(id=id).first()
+    data = json.loads(music.data)
+    lyrics = map(lambda t: t['lyric'], data)
+    lyrics = ''.join(lyrics)
+    path = music.raw_midi_path + '.mp3'
+    return render_template('watch.html', title=music.name, lyrics=lyrics, path=path)
+
+@app.route('/media/<path>')
+def media(path):
+    print app.config['UPLOAD_FOLDER']
+    return send_from_directory(app.config['UPLOAD_FOLDER'], path)
 
 @app.route('/users/<name>')
 def users(name):
@@ -93,8 +103,9 @@ def compose():
 
                 composer = Melody.Composer(ts, beats, prog, note_range, skip_prob, bpm)
                 midi = Melody.concat_midi(midi, composer.compose())
-        savepath = 'log/' + ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)]) + '.mid'
-        midi.save(savepath)
+        savepath = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
+        midi.save('media/' + savepath + '.mid')
+        os.system('timidity media/%s.mid -Ow -o - | lame - -b 64 media/%s.mp3' % (savepath, savepath))
         music = Musics(title, savepath, request.form['data'], user_id)
         db.session.add(music)
         db.session.commit()
@@ -102,10 +113,11 @@ def compose():
         return ('Unknown Error', 500)
     except KeyError:
         return ('Unknown Error', 500)
-    return ('', 204)
+    return (jsonify({'music_id': music.id}), 200)
 
 if __name__ == '__main__':
     app.debug = True
     app.template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
     app.static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
     manager.run()
