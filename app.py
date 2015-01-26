@@ -29,7 +29,6 @@ def watch(id):
 
 @app.route('/media/<path>')
 def media(path):
-    print app.config['UPLOAD_FOLDER']
     return send_from_directory(app.config['UPLOAD_FOLDER'], path)
 
 @app.route('/users/<name>')
