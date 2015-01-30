@@ -4,7 +4,7 @@ import os, sys
 sys.path.append(os.getcwd())
 
 import sure
-import orpheus.rhythm as Rhythm
+import melete.rhythm as Rhythm
 
 Rhythm.TimeSignature(4, 2).simple.should.be.equal(4.0 / 4)
 Rhythm.TimeSignature(3, 3).simple.should.be.equal(3.0 / 8)

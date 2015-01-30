@@ -4,7 +4,7 @@ import os, sys
 sys.path.append(os.getcwd())
 
 import sure
-import orpheus.chord as Chord
+import melete.chord as Chord
 
 test1 = Chord.Chord.from_name(u'C')
 test1.root.should.be.equal(0)

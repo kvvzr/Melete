@@ -6,7 +6,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 from sqlalchemy.dialects import mysql
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://orpheus:kumapanda@localhost/orpheus'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://melete:kumapanda@localhost/melete'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 manager = Manager(app)

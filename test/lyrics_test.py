@@ -4,8 +4,8 @@ import os, sys
 sys.path.append(os.getcwd())
 
 import sure
-import orpheus.lyrics as Lyrics
-import orpheus.rhythm as Rhythm
+import melete.lyrics as Lyrics
+import melete.rhythm as Rhythm
 
 Lyrics.split_by_mora(u'ニャーンカッパ').should.be.equal([u'ニャ', u'ー', u'ン', u'カ', u'ッ', u'パ'])
 Lyrics.split_by_mora(u'ニャ_ーン^カッ_パ').should.be.equal([u'ニャ_', u'ー', u'ン^', u'カ', u'ッ_', u'パ'])
@@ -14,7 +14,9 @@ Lyrics.insert_accent(u'ハシ', 1).should.be.equal(u'ハ_シ')
 Lyrics.insert_accent(u'ハシ', 2).should.be.equal(u'ハ^シ_')
 Lyrics.insert_accent(u'ハシ', 0).should.be.equal(u'ハ^シ')
 
-Lyrics.analyze(u'矢澤にこ===星空凛').should.be.equal([u'ヤ^ザワ/ニ^コ_/', u'ホ^シゾラ/リ_ン/'])
+l = Lyrics.analyze(u'矢澤にこ===星空凛')
+l[0]['phoneme'].should.be.equal(u'ヤ^ザワ/ニ^コ_/')
+l[1]['phoneme'].should.be.equal(u'ホ^シゾラ/リ_ン/')
 
 rhythms = [
     [],
@@ -32,7 +34,7 @@ lyric = u'ア^イウ/ア^イウエ/ア^イウエ_オ/ /カキク/ / /'
 bars = Lyrics.divide(lyric, rhythm_tree)
 bars.should.be.equal([[u'ア^イウ', u'ア^イウエ'], [u'ア^イウエ_オ'], [u'カキク'], []])
 
-pair = [
+pairs = [
     (u'ア^', 0.0),
     (u'イ', 0.125),
     (u'ウ', 0.25),
@@ -52,4 +54,4 @@ pair = [
 beats = Lyrics.pair(bars, rhythm_tree)
 beats.division.should.be.equal(rhythm_tree.division)
 beats.time.should.be.equal(4)
-beats.pairs.should.be.equal(pair)
+beats.pairs.should.be.equal(pairs)

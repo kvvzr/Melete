@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from orpheus.models import *
+from melete.models import *
 
-import os
-import string
-import random
+import os, string, random
 from datetime import datetime as dt
 from flask import request, json, jsonify, render_template, send_from_directory
 import mido
-import orpheus.lyrics as Lyrics
-import orpheus.rhythm as Rhythm
-import orpheus.chord as Chord
-import orpheus.melody as Melody
+import melete.lyrics as Lyrics
+import melete.rhythm as Rhythm
+import melete.chord as Chord
+import melete.melody as Melody
 
 # router
 @app.route('/')

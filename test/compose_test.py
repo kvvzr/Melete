@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os, sys, string, random
 sys.path.append(os.getcwd())
 
 from datetime import datetime as dt
 import mido
 import sure
-import orpheus.lyrics as Lyrics
-import orpheus.rhythm as Rhythm
-import orpheus.chord as Chord
-import orpheus.melody as Melody
+import melete.lyrics as Lyrics
+import melete.rhythm as Rhythm
+import melete.chord as Chord
+import melete.melody as Melody
 
 ts = Rhythm.TimeSignature(4, 2)
 rhythms = [[0], [0, 96], [48, 96, 144], [0, 48, 96, 144]]
@@ -27,7 +27,6 @@ em7 = Chord.Chord.from_name('E7')
 am = Chord.Chord.from_name('Am')
 am.inversion(1)
 prog = Chord.ChordProg(48, 4, [(f7, 0), (gd7, 192), (em7, 384), (am, 576)])
-print prog.to_dict()
 
 note_range = range(Chord.Scale.from_name('C4').note, Chord.Scale.from_name('A5').note)
 
