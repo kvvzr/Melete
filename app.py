@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from melete.models import *
-
 import os, string, random
 from datetime import datetime as dt
-from flask import request, json, jsonify, render_template, send_from_directory
+from flask import Flask, request, json, jsonify, render_template, send_from_directory
 import mido
 import melete.lyrics as Lyrics
 import melete.rhythm as Rhythm
 import melete.chord as Chord
 import melete.melody as Melody
+
+app = Flask(__name__)
+app.debug = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://melete:kumapanda@localhost/melete'
+app.config['TEMPLATE_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+app.config['STATIC_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
+from melete.models import *
 
 # router
 @app.route('/')
@@ -113,8 +119,4 @@ def compose():
     return (jsonify({'music_id': music.id}), 200)
 
 if __name__ == '__main__':
-    app.debug = True
-    app.template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-    app.static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
-    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
     manager.run()
