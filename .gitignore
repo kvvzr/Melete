@@ -107,6 +107,9 @@ docs/_build/
 # PyBuilder
 target/
 
+# Melete
 log/
-media/
+uploads/
 migrations/
+!static/lib
+
