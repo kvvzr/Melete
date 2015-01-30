@@ -1,6 +1,5 @@
-flask==0.10.1
-flask-mysql==1.2
-Flask-Migrate==1.3.0
+flask
+flask-mysql
+Flask-Migrate
 mido==1.1.12
 sure==1.2.8
-uniout
