@@ -14,7 +14,16 @@ app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://melete:kumapanda@localhost/melete'
 app.config['TEMPLATE_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app.config['STATIC_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
-app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media')
+app.config['MEDIA_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads/media')
+app.config['ICONS_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads/icons')
+
+# init dirs
+if not os.path.exists(app.config['MEDIA_FOLDER']):
+    os.makedirs(app.config['MEDIA_FOLDER'])
+if not os.path.exists(app.config['ICONS_FOLDER']):
+    os.makedirs(app.config['ICONS_FOLDER'])
+
+# models
 from melete.models import *
 
 # router
@@ -33,7 +42,7 @@ def watch(id):
 
 @app.route('/media/<path>')
 def media(path):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], path)
+    return send_from_directory(app.config['MEDIA_FOLDER'], path)
 
 @app.route('/users/<name>')
 def users(name):
@@ -107,8 +116,8 @@ def compose():
                 composer = Melody.Composer(ts, beats, prog, note_range, skip_prob, bpm)
                 midi = Melody.concat_midi(midi, composer.compose())
         savepath = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
-        midi.save('media/' + savepath + '.mid')
-        os.system('timidity media/%s.mid -Ow -o - | lame - -b 64 media/%s.mp3' % (savepath, savepath))
+        midi.save(app.config['MEDIA_FOLDER'] + '/' + savepath + '.mid')
+        os.system('timidity %s.mid -Ow -o - | lame - -b 64 %s.mp3' % (app.config['MEDIA_FOLDER'] + '/' + savepath, app.config['MEDIA_FOLDER'] + '/' + savepath))
         music = Musics(title, savepath, request.form['data'], user_id)
         db.session.add(music)
         db.session.commit()

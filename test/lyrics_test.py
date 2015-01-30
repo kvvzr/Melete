@@ -14,6 +14,7 @@ Lyrics.insert_accent(u'ハシ', 1).should.be.equal(u'ハ_シ')
 Lyrics.insert_accent(u'ハシ', 2).should.be.equal(u'ハ^シ_')
 Lyrics.insert_accent(u'ハシ', 0).should.be.equal(u'ハ^シ')
 
+Lyrics.analyze(u'お釣り') #アクセント型がない
 l = Lyrics.analyze(u'矢澤にこ===星空凛')
 l[0]['phoneme'].should.be.equal(u'ヤ^ザワ/ニ^コ_/')
 l[1]['phoneme'].should.be.equal(u'ホ^シゾラ/リ_ン/')

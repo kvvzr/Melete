@@ -48,6 +48,8 @@ def analyze(text):
             for word in mecab.parse(phrase).decode('utf-8').split('\n'):
                 features = word.split('\t')
                 if len(features) == 10:
+                    atypes = []
+                    acons = []
                     try:
                         # アクセント型
                         atypes = map(lambda n: unicodedata.decimal(n), features[-2].split(','))
