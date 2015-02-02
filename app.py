@@ -36,7 +36,6 @@ def watch(id):
     music = Musics.query.filter_by(id=id).first()
     data = json.loads(music.data)
     lyrics = map(lambda t: t['lyric'], data)
-    lyrics = ''.join(lyrics)
     path = music.raw_midi_path + '.mp3'
     return render_template('watch.html', title=music.name, lyrics=lyrics, path=path)
 
@@ -115,9 +114,11 @@ def compose():
 
                 composer = Melody.Composer(ts, beats, prog, note_range, skip_prob, bpm)
                 midi = Melody.concat_midi(midi, composer.compose())
+
         savepath = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
         midi.save(app.config['MEDIA_FOLDER'] + '/' + savepath + '.mid')
         os.system('timidity %s.mid -Ow -o - | lame - -b 64 %s.mp3' % (app.config['MEDIA_FOLDER'] + '/' + savepath, app.config['MEDIA_FOLDER'] + '/' + savepath))
+
         music = Musics(title, savepath, request.form['data'], user_id)
         db.session.add(music)
         db.session.commit()
