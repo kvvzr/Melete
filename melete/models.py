@@ -1,4 +1,5 @@
 import os, inspect
+from datetime import datetime
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
@@ -15,13 +16,17 @@ class Users(db.Model):
     name = db.Column(db.String(255), nullable=False, unique=True)
     screen_name = db.Column(db.String(255), nullable=False)
     passwd = db.Column(db.String(255), nullable=False)
-    icon_path = db.Column(db.String(2048), nullable=True, default=None)
+    icon_path = db.Column(db.String(2047), nullable=True, default=None)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
+    bio = db.Column(db.String(1023), nullable=True, default=None)
+    status = db.Column(db.String(255), nullable=True, default=None)
 
     def __init__(self, name, screen_name, passwd, icon_path):
         self.name = name
         self.screen_name = screen_name
         self.passwd = passwd
         self.icon_path = icon_path
+        self.created_at = datetime.now()
 
 class Rhythms(db.Model):
     __tablename__ = 'rhythms'
@@ -29,6 +34,10 @@ class Rhythms(db.Model):
     name = db.Column(db.String(255), nullable=False)
     data = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
+    tag = db.Column(db.String(2047), nullable=True, default=None)
+    desc = db.Column(db.String(1023), nullable=True, default=None)
+    status = db.Column(db.String(255), nullable=True, default=None)
 
 class Chords(db.Model):
     __tablename__ = 'chords'
@@ -36,6 +45,10 @@ class Chords(db.Model):
     name = db.Column(db.String(255), nullable=False)
     data = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
+    tag = db.Column(db.String(2047), nullable=True, default=None)
+    desc = db.Column(db.String(1023), nullable=True, default=None)
+    status = db.Column(db.String(255), nullable=True, default=None)
 
 class Accoms(db.Model):
     __tablename__ = 'accoms'
@@ -43,6 +56,10 @@ class Accoms(db.Model):
     name = db.Column(db.String(255), nullable=False)
     data = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
+    tag = db.Column(db.String(2047), nullable=True, default=None)
+    desc = db.Column(db.String(1023), nullable=True, default=None)
+    status = db.Column(db.String(255), nullable=True, default=None)
 
 class Drums(db.Model):
     __tablename__ = 'drums'
@@ -50,24 +67,33 @@ class Drums(db.Model):
     name = db.Column(db.String(255), nullable=False)
     data = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
+    tag = db.Column(db.String(2047), nullable=True, default=None)
+    desc = db.Column(db.String(1023), nullable=True, default=None)
+    status = db.Column(db.String(255), nullable=True, default=None)
 
 class Musics(db.Model):
     __tablename__ = 'musics'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    raw_midi_path = db.Column(db.String(2048), nullable=True, default=None)
+    raw_midi_path = db.Column(db.String(2047), nullable=True, default=None)
     fork_count = db.Column(db.Integer, nullable=False, default=0)
     fork_from = db.Column(db.Integer, nullable=True, default=None)
     star_count = db.Column(db.Integer, nullable=False, default=0)
     play_count = db.Column(db.Integer, nullable=False, default=0)
     data = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
+    tag = db.Column(db.String(2047), nullable=True, default=None)
+    desc = db.Column(db.String(1023), nullable=True, default=None)
+    status = db.Column(db.String(255), nullable=True, default=None)
 
     def __init__(self, name, raw_midi_path, data, user_id):
         self.name = name
         self.raw_midi_path = raw_midi_path
         self.data = data
         self.user_id = user_id
+        self.created_at = datetime.now()
 
 class StaredUsers(db.Model):
     __tablename__ = 'stared_users'
@@ -111,6 +137,7 @@ class RhythmComments(db.Model):
     rhythms_id = db.Column(db.Integer, db.ForeignKey('rhythms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     comment = db.Column(db.String(1023), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
 
 class ChordComments(db.Model):
     __tablename__ = 'chord_comments'
@@ -118,6 +145,7 @@ class ChordComments(db.Model):
     chords_id = db.Column(db.Integer, db.ForeignKey('chords.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     comment = db.Column(db.String(1023), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
 
 class AccomComments(db.Model):
     __tablename__ = 'accom_comments'
@@ -125,6 +153,7 @@ class AccomComments(db.Model):
     accoms_id = db.Column(db.Integer, db.ForeignKey('accoms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     comment = db.Column(db.String(1023), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
 
 class DrumComments(db.Model):
     __tablename__ = 'drum_comments'
@@ -132,6 +161,7 @@ class DrumComments(db.Model):
     drums_id = db.Column(db.Integer, db.ForeignKey('drums.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     comment = db.Column(db.String(1023), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
 
 class MusicComments(db.Model):
     __tablename__ = 'music_comments'
@@ -139,4 +169,5 @@ class MusicComments(db.Model):
     music_id = db.Column(db.Integer, db.ForeignKey('musics.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     comment = db.Column(db.String(1023), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True, default=None)
 
