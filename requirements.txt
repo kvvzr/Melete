@@ -1,5 +1,7 @@
 flask
 flask-mysql
 Flask-Migrate
+Flask-OAuthlib
+requests
 mido==1.1.12
 sure==1.2.8

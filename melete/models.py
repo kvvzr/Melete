@@ -15,17 +15,15 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False, unique=True)
     screen_name = db.Column(db.String(255), nullable=False)
-    passwd = db.Column(db.String(255), nullable=False)
     icon_path = db.Column(db.String(2047), nullable=True, default=None)
     created_at = db.Column(db.DateTime, nullable=True, default=None)
     bio = db.Column(db.String(1023), nullable=True, default=None)
     status = db.Column(db.String(255), nullable=True, default=None)
+    twitter_id = db.Column(db.String(255), nullable=True, default=None)
 
-    def __init__(self, name, screen_name, passwd, icon_path):
-        self.name = name
+    def __init__(self, name, screen_name):
         self.screen_name = screen_name
-        self.passwd = passwd
-        self.icon_path = icon_path
+        self.name = name
         self.created_at = datetime.now()
 
 class Rhythms(db.Model):
@@ -38,6 +36,7 @@ class Rhythms(db.Model):
     tag = db.Column(db.String(2047), nullable=True, default=None)
     desc = db.Column(db.String(1023), nullable=True, default=None)
     status = db.Column(db.String(255), nullable=True, default=None)
+    media_path = db.Column(db.String(255), nullable=True, default=None)
 
 class Chords(db.Model):
     __tablename__ = 'chords'
@@ -49,6 +48,7 @@ class Chords(db.Model):
     tag = db.Column(db.String(2047), nullable=True, default=None)
     desc = db.Column(db.String(1023), nullable=True, default=None)
     status = db.Column(db.String(255), nullable=True, default=None)
+    media_path = db.Column(db.String(255), nullable=True, default=None)
 
 class Accoms(db.Model):
     __tablename__ = 'accoms'
@@ -60,6 +60,7 @@ class Accoms(db.Model):
     tag = db.Column(db.String(2047), nullable=True, default=None)
     desc = db.Column(db.String(1023), nullable=True, default=None)
     status = db.Column(db.String(255), nullable=True, default=None)
+    media_path = db.Column(db.String(255), nullable=True, default=None)
 
 class Drums(db.Model):
     __tablename__ = 'drums'
@@ -71,12 +72,13 @@ class Drums(db.Model):
     tag = db.Column(db.String(2047), nullable=True, default=None)
     desc = db.Column(db.String(1023), nullable=True, default=None)
     status = db.Column(db.String(255), nullable=True, default=None)
+    media_path = db.Column(db.String(255), nullable=True, default=None)
 
 class Musics(db.Model):
     __tablename__ = 'musics'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    raw_midi_path = db.Column(db.String(2047), nullable=True, default=None)
+    media_path = db.Column(db.String(255), nullable=True, default=None)
     fork_count = db.Column(db.Integer, nullable=False, default=0)
     fork_from = db.Column(db.Integer, nullable=True, default=None)
     star_count = db.Column(db.Integer, nullable=False, default=0)
@@ -88,9 +90,9 @@ class Musics(db.Model):
     desc = db.Column(db.String(1023), nullable=True, default=None)
     status = db.Column(db.String(255), nullable=True, default=None)
 
-    def __init__(self, name, raw_midi_path, data, user_id):
+    def __init__(self, name, media_path, data, user_id):
         self.name = name
-        self.raw_midi_path = raw_midi_path
+        self.media_path = media_path
         self.data = data
         self.user_id = user_id
         self.created_at = datetime.now()

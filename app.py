@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 
-import os, string, random
-from datetime import datetime as dt
-from flask import Flask, request, json, jsonify, render_template, send_from_directory
+import os, config
+from flask import Flask, request, json, jsonify, render_template, send_from_directory, g, session, url_for, redirect
+from flask_oauthlib.client import OAuth
 import mido
 import melete.lyrics as Lyrics
 import melete.rhythm as Rhythm
 import melete.chord as Chord
 import melete.melody as Melody
+import melete.util as Util
 
 app = Flask(__name__)
 app.debug = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://melete:kumapanda@localhost/melete'
-app.config['TEMPLATE_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app.config['STATIC_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
-app.config['MEDIA_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads/media')
-app.config['ICONS_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads/icons')
+app.config['SQLALCHEMY_DATABASE_URI'] = config.db_uri
+app.config['TEMPLATE_FOLDER'] = config.dirs['template']
+app.config['STATIC_FOLDER'] = config.dirs['static']
+app.config['MEDIA_FOLDER'] = config.dirs['media']
+app.config['ICONS_FOLDER'] = config.dirs['icons']
+app.config['SECRET_KEY'] = config.secret_key
 
 # init dirs
 if not os.path.exists(app.config['MEDIA_FOLDER']):
@@ -25,6 +27,31 @@ if not os.path.exists(app.config['ICONS_FOLDER']):
 
 # models
 from melete.models import *
+
+# oauth
+oauth = OAuth(app)
+
+twitter = oauth.remote_app(
+    'twitter',
+    consumer_key=config.twitter['consumer_key'],
+    consumer_secret=config.twitter['consumer_secret'],
+    base_url='https://api.twitter.com/1.1/',
+    request_token_url='https://api.twitter.com/oauth/request_token',
+    access_token_url='https://api.twitter.com/oauth/access_token',
+    authorize_url='https://api.twitter.com/oauth/authenticate',
+)
+
+@twitter.tokengetter
+def get_twitter_token():
+    if 'twitter_oauth' in session:
+        res = session['twitter_oauth']
+        return res['oauth_token'], res['oauth_token_secret']
+
+@app.before_request
+def before_request():
+    g.user = None
+    if 'twitter_oauth' in session:
+        g.user = session['twitter_oauth']
 
 # router
 @app.route('/')
@@ -36,7 +63,9 @@ def watch(id):
     music = Musics.query.filter_by(id=id).first()
     data = json.loads(music.data)
     lyrics = map(lambda t: t['lyric'], data)
-    path = music.raw_midi_path + '.mp3'
+    path = ''
+    if music.media_path:
+        path = music.media_path + '.mp3'
     return render_template('watch.html', title=music.name, lyrics=lyrics, path=path)
 
 @app.route('/media/<path>')
@@ -69,11 +98,41 @@ def new_entry():
 
 @app.route('/login')
 def login():
-    pass
+    callback_url = url_for('oauthorized', next=request.args.get('next'))
+    return twitter.authorize(callback=callback_url or request.referrer or None)
 
 @app.route('/sign_up')
 def sign_up():
     pass
+
+@app.route('/logout')
+def logout():
+    session.pop('twitter_oauth', None)
+    return redirect(url_for('index'))
+
+@app.route('/oauthorized')
+def oauthorized():
+    res = twitter.authorized_response()
+    if res is None:
+        return redirect(url_for('index'))
+    session['twitter_oauth'] = res
+
+    user = Users.query.filter_by(twitter_id=res['user_id']).first()
+    if user is None:
+        name = Util.random_string(6)
+        user = Users(name, res['screen_name'])
+        user.twitter_id = res['user_id']
+        icon_path = Util.save_twitter_icon(
+            twitter,
+            app.config['ICONS_FOLDER'],
+            res['screen_name'], res['user_id']
+        )
+        if icon_path:
+            user.icon_path = icon_path
+        db.session.add(user)
+        db.session.commit()
+
+    return redirect(url_for('index'))
 
 @app.route('/analyze_lyrics', methods=['POST'])
 def analyze_lyrics():
@@ -115,7 +174,7 @@ def compose():
                 composer = Melody.Composer(ts, beats, prog, note_range, skip_prob, bpm)
                 midi = Melody.concat_midi(midi, composer.compose())
 
-        savepath = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)])
+        savepath = Util.random_string(16)
         midi.save(app.config['MEDIA_FOLDER'] + '/' + savepath + '.mid')
         os.system('timidity %s.mid -Ow -o - | lame - -b 64 %s.mp3' % (app.config['MEDIA_FOLDER'] + '/' + savepath, app.config['MEDIA_FOLDER'] + '/' + savepath))
 
