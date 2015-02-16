@@ -30,3 +30,23 @@ header h1 {
     margin: 8px 0 8px 0;
 }
 
+.lyrics_form p {
+    margin-top: 8px;
+    font-size: 0.8em;
+}
+
+.bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 100%;
+}
+
+.new_entry {
+    background: #eee;
+    width: 100%;
+    height: 96px;
+    margin-top: 8px;
+    padding: 4px;
+}
+
+.new_entry h2 {
+    margin: 0;
+}

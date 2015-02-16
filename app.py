@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os, config
+from functools import wraps
 from flask import Flask, request, json, jsonify, render_template, send_from_directory, g, session, url_for, redirect
 from flask_oauthlib.client import OAuth
 import mido
@@ -27,6 +28,22 @@ if not os.path.exists(app.config['ICONS_FOLDER']):
 
 # models
 from melete.models import *
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def get_icon(user_id):
+    login_icon_path = None
+    if user_id:
+        login_user = Users.query.filter_by(id=user_id).first()
+        if login_user and login_user.icon_path:
+            login_icon_path = login_user.icon_path
+    return login_icon_path
 
 # oauth
 oauth = OAuth(app)
@@ -56,21 +73,40 @@ def before_request():
 # router
 @app.route('/')
 def index():
-    return render_template('index.html')
+    login_icon_path = None
+    if 'user_id' in session:
+        login_icon_path = get_icon(session['user_id'])
+    return render_template('index.html', login_icon_path=login_icon_path)
 
 @app.route('/watch/<int:id>')
 def watch(id):
     music = Musics.query.filter_by(id=id).first()
     data = json.loads(music.data)
     lyrics = map(lambda t: t['lyric'], data)
-    path = ''
+
+    media_path = ''
     if music.media_path:
-        path = music.media_path + '.mp3'
-    return render_template('watch.html', title=music.name, lyrics=lyrics, path=path)
+        media_path = music.media_path + '.mp3'
+
+    login_icon_path = get_icon(session['user_id'])
+    icon_path = get_icon(music.user_id)
+
+    return render_template(
+        'watch.html',
+        title=music.name,
+        lyrics=lyrics,
+        media_path=media_path,
+        login_icon_path=login_icon_path,
+        icon_path=icon_path
+    )
 
 @app.route('/media/<path>')
 def media(path):
     return send_from_directory(app.config['MEDIA_FOLDER'], path)
+
+@app.route('/icons/<path>')
+def icons(path):
+    return send_from_directory(app.config['ICONS_FOLDER'], path)
 
 @app.route('/users/<name>')
 def users(name):
@@ -94,20 +130,58 @@ def ranking():
 
 @app.route('/new_entry')
 def new_entry():
-    pass
+    login_icon_path = get_icon(session['user_id'])
+    musics = Musics.query.order_by(Musics.id.desc()).limit(20).all()
+    return render_template('new_entry.html', login_icon_path=login_icon_path, musics=musics)
 
 @app.route('/login')
 def login():
+    return render_template('login.html')
+
+@app.route('/login/twitter')
+def login_twitter():
     callback_url = url_for('oauthorized', next=request.args.get('next'))
     return twitter.authorize(callback=callback_url or request.referrer or None)
 
-@app.route('/sign_up')
+@app.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
-    pass
+    if request.method == 'POST':
+        if 'twitter_oauth' in session:
+            res = session['twitter_oauth']
+
+            user = Users.query.filter_by(twitter_id=res['user_id']).first()
+            if user is not None:
+                return redirect(url_for('index'))
+
+            name = request.form['name']
+            user = Users.query.filter_by(name=name).first()
+            if user is not None:
+                return redirect(url_for('sign_up'))
+
+            user = Users(name, res['screen_name'])
+            user.twitter_id = res['user_id']
+
+            icon_path = Util.save_twitter_icon(
+                twitter,
+                app.config['ICONS_FOLDER'],
+                res['screen_name'], res['user_id']
+            )
+            if icon_path:
+                user.icon_path = icon_path
+
+            db.session.add(user)
+            db.session.commit()
+
+            session['user_id'] = user.id
+        return redirect(url_for('index'))
+    else:
+        return render_template('sign_up.html')
 
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('twitter_oauth', None)
+    session.pop('user_id', None)
     return redirect(url_for('index'))
 
 @app.route('/oauthorized')
@@ -119,29 +193,22 @@ def oauthorized():
 
     user = Users.query.filter_by(twitter_id=res['user_id']).first()
     if user is None:
-        name = Util.random_string(6)
-        user = Users(name, res['screen_name'])
-        user.twitter_id = res['user_id']
-        icon_path = Util.save_twitter_icon(
-            twitter,
-            app.config['ICONS_FOLDER'],
-            res['screen_name'], res['user_id']
-        )
-        if icon_path:
-            user.icon_path = icon_path
-        db.session.add(user)
-        db.session.commit()
+        return redirect(url_for('sign_up'))
+
+    session['user_id'] = user.id
 
     return redirect(url_for('index'))
 
 @app.route('/analyze_lyrics', methods=['POST'])
+@login_required
 def analyze_lyrics():
     return jsonify({'tunes': Lyrics.analyze(request.form['text'])})
 
 @app.route('/compose', methods=['POST'])
+@login_required
 def compose():
     try:
-        user_id = 1
+        user_id = session['user_id']
         title = request.form['title']
         data = json.loads(request.form['data'])
 

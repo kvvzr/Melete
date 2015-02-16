@@ -7,7 +7,7 @@
         $('#btn-analyze').on('click', function(event) {
             if (!$('#music-title').val() || !$('#music-lyrics').val()) {
                 return;
-            } 
+            }
             $('#tune-details').empty();
             $.post('/analyze_lyrics', {text: $('#music-lyrics').val()}).done(function(data) {
                 $('#tune-details').append(tmpl($('#template-tunes').text(), data));
@@ -39,6 +39,8 @@
     });
 
     function loadPicker() {
-        $('.selectpicker').selectpicker();
+        $('.selectpicker').selectpicker({
+            tickIcon: '',
+        });
     } 
 })(this, jQuery);

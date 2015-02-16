@@ -20,7 +20,7 @@ def save_as_random_name(url, save_path):
             res.raw.decode_content = True
             shutil.copyfileobj(res.raw, file)
 
-    return filename
+    return filename + '.' + filetype
 
 def save_twitter_icon(twitter, save_path, screen_name, user_id):
     res = twitter.request('users/show.json', data={

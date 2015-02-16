@@ -1,14 +1,15 @@
-/*
- * Translated default messages for bootstrap-select.
- * Locale: DE (German, deutsch)
- * Region: DE (Germany, Deutschland)
+/*!
+ * Bootstrap-select v1.6.3 (http://silviomoreto.github.io/bootstrap-select)
+ *
+ * Copyright 2013-2015 bootstrap-select
+ * Licensed under MIT (https://github.com/silviomoreto/bootstrap-select/blob/master/LICENSE)
  */
 (function ($) {
   $.fn.selectpicker.defaults = {
     noneSelectedText: 'Bitte wählen...',
-    noneResultsText: 'Keine Ergebnisse für',
+    noneResultsText: 'Keine Ergebnisse für {0}',
     countSelectedText: '{0} von {1} ausgewählt',
     maxOptionsText: ['Limit erreicht ({n} {var} max.)', 'Gruppen-Limit erreicht ({n} {var} max.)', ['Eintrag', 'Einträge']],
     multipleSeparator: ', '
   };
-}(jQuery));
+})(jQuery);

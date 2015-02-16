@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block title %}新着投稿 | {% endblock %}
+
+{% block body %}
+    {% for item in musics %}
+        <div class='col-sm-4'>
+            <div class='new_entry'>
+                <a href='/watch/{{ item.id }}'><h2>{{ item.name }}</h2></a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

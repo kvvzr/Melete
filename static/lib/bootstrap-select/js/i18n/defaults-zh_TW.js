@@ -1,7 +1,8 @@
-/*
- * Translated default messages for bootstrap-select.
- * Locale: ZH (Chinese)
- * Region: TW (Taiwan)
+/*!
+ * Bootstrap-select v1.6.3 (http://silviomoreto.github.io/bootstrap-select)
+ *
+ * Copyright 2013-2015 bootstrap-select
+ * Licensed under MIT (https://github.com/silviomoreto/bootstrap-select/blob/master/LICENSE)
  */
 (function ($) {
   $.fn.selectpicker.defaults = {
@@ -13,4 +14,4 @@
     deselectAllText: '全部取消',
     multipleSeparator: ', '
   };
-}(jQuery));
+})(jQuery);

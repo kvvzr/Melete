@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block title %}登録 | {% endblock %}
+
+{% block body %}
+    <form class='form-inline' action='/sign_up' method='POST'>
+        <label for='name'>ID</label>
+        <input type='text' class='form-control' name='name' />
+    </form>
+{% endblock %}
