@@ -109,11 +109,19 @@ class StaredRhythms(db.Model):
     rhythms_id = db.Column(db.Integer, db.ForeignKey('rhythms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+    rhythms = db.relationship(Rhythms, foreign_keys='StaredRhythms.rhythms_id')
+
+    def __init__(self, rhythms_id, user_id):
+        self.rhythms_id = rhythms_id
+        self.user_id = user_id
+
 class StaredChords(db.Model):
     __tablename__ = 'stared_chords'
     id = db.Column(db.Integer, primary_key=True)
     chords_id = db.Column(db.Integer, db.ForeignKey('chords.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    chords = db.relationship(Chords, foreign_keys='StaredChords.chords_id')
 
 class StaredAccoms(db.Model):
     __tablename__ = 'stared_accoms'

@@ -29,30 +29,40 @@
     <div class="col-sm-4 lyrics_form">
     <div class="col-sm-6">
     <p style="display: inline;">コード進行</p>
-    <select class="selectpicker" style="width: 100%;">
-    <option>王道進行</option>
+    <select id="chords-selector" class="selector">
+    {% if chords %}
+    {% for sc in chords %}
+    <option data-content="<span data-id=&quot;{{ sc.chords.id }}&quot;>{{ sc.chords.name }}</span>"></option>
+    {% endfor %}
+    {% endif %}
     </select>
     <br />
     <p style="display: inline;">リズム</p>
-    <select class="selectpicker">
-    <option>リズム形1</option>
+    <select id="rhythms-selector" class="selector">
+    {% if rhythms %}
+    {% for sr in rhythms %}
+    <option data-content="<span data-id=&quot;{{ sr.rhythms.id }}&quot;>{{ sr.rhythms.name }}</span>"></option>
+    {% endfor %}
+    {% endif %}
     </select>
     <br />
     <p style="display: inline;">拍子</p>
-    <select class="selectpicker">
-    <option>4 / 4</option>
+    <select id="time-selector" class="selector">
+    <option data-content="<span data-nn=&quot;5&quot; data-dd=&quot;2&quot;>5 / 4</span>"></option>
+    <option data-content="<span data-nn=&quot;4&quot; data-dd=&quot;2&quot;>4 / 4</span>">4 / 4</option>
+    <option data-content="<span data-nn=&quot;3&quot; data-dd=&quot;2&quot;>3 / 4</span>"></option>
     </select>
     <br />
     </div>
     <div class="col-sm-6">
     <p style="display: inline;">音域上限</p>
-    <select class="selectpicker">
-    <option>hiA</option>
+    <select id="range-high-selector" class="selector">
+    <option data-content="<span data-range-high=&quot;93&quot;>hiA</span>"></option>
     </select>
     <br />
     <p style="display: inline;">音域下限</p>
-    <select class="selectpicker">
-    <option>mid2C</option>
+    <select id="range-low-selector" class="selector">
+    <option data-content="<span data-range-low=&quot;72&quot;>mid2C</span>"></option>
     </select>
     <br />
     <p style="display: inline;">BPM</p>

@@ -74,9 +74,19 @@ def before_request():
 @app.route('/')
 def index():
     login_icon_path = None
+    stared_rhythms = None
+    stared_chords = None
+
     if 'user_id' in session:
         login_icon_path = get_icon(session['user_id'])
-    return render_template('index.html', login_icon_path=login_icon_path)
+        stared_rhythms = StaredRhythms.query.filter_by(user_id=session['user_id']).all()
+        stared_chords = StaredChords.query.filter_by(user_id=session['user_id']).all()
+    return render_template(
+        'index.html',
+        login_icon_path=login_icon_path,
+        rhythms=stared_rhythms,
+        chords=stared_chords
+    )
 
 @app.route('/watch/<int:id>')
 def watch(id):
@@ -84,11 +94,14 @@ def watch(id):
     data = json.loads(music.data)
     lyrics = map(lambda t: t['lyric'], data)
 
-    media_path = ''
+    media_path = None
     if music.media_path:
         media_path = music.media_path + '.mp3'
 
-    login_icon_path = get_icon(session['user_id'])
+    login_icon_path = None
+    if 'user_id' in session:
+        login_icon_path = get_icon(session['user_id'])
+
     icon_path = get_icon(music.user_id)
 
     return render_template(
@@ -130,7 +143,10 @@ def ranking():
 
 @app.route('/new_entry')
 def new_entry():
-    login_icon_path = get_icon(session['user_id'])
+    login_icon_path = None
+
+    if 'user_id' in session:
+        login_icon_path = get_icon(session['user_id'])
     musics = Musics.query.order_by(Musics.id.desc()).limit(20).all()
     return render_template('new_entry.html', login_icon_path=login_icon_path, musics=musics)
 
@@ -248,10 +264,10 @@ def compose():
         music = Musics(title, savepath, request.form['data'], user_id)
         db.session.add(music)
         db.session.commit()
-    except ValueError:
-        return ('Unknown Error', 500)
-    except KeyError:
-        return ('Unknown Error', 500)
+    except ValueError as e:
+        return ('Error: %s' % e, 500)
+    except KeyError as e:
+        return ('Error: %s' % e, 500)
     return (jsonify({'music_id': music.id}), 200)
 
 if __name__ == '__main__':
