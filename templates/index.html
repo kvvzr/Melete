@@ -10,8 +10,8 @@
     <div id='composer' class='carousel slide' data-ride='carousel' data-interval=''>
         <div class='carousel-inner'>
             <div class='item active'>
-                <input id='music-title' class='form-control lyrics_form' placeholder='タイトル'></textarea>
-                <textarea id='music-lyrics' class='form-control lyrics_form' rows='5' placeholder='歌詞'></textarea>
+                <input id='music-title' class='form-control lyrics-form' placeholder='タイトル'></textarea>
+                <textarea id='music-lyrics' class='form-control lyrics-form' rows='5' placeholder='歌詞'></textarea>
                 <button id='btn-analyze' class='btn pull-right btn-lg btn-primary'>詳細設定</button>
             </div>
             <div class='item'>
@@ -26,7 +26,7 @@
     <script type='text/html' id='template-tunes'>
     <% for (var i = 0; i < tunes.length; i++) { %>
     <div class="row tune-detail">
-    <div class="col-sm-4 lyrics_form">
+    <div class="col-sm-4 lyrics-form">
     <div class="col-sm-6">
     <p style="display: inline;">コード進行</p>
     <select id="chords-selector" class="selector">
@@ -71,10 +71,10 @@
     </div>
     </div>
     <div class="col-sm-4">
-    <textarea class="form-control lyrics_form tune-lyric" rows="10" placeholder="歌詞"><%=tunes[i].lyric%></textarea>
+    <textarea class="form-control lyrics-form tune-lyric" rows="10" placeholder="歌詞"><%=tunes[i].lyric%></textarea>
     </div>
     <div class="col-sm-4">
-    <textarea class="form-control lyrics_form tune-phoneme" rows="10" placeholder="音韻"><%=tunes[i].phoneme%></textarea>
+    <textarea class="form-control lyrics-form tune-phoneme" rows="10" placeholder="音韻"><%=tunes[i].phoneme%></textarea>
     </div>
     </div>
     <% } %>

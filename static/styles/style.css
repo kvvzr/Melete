@@ -1,36 +1,22 @@
-.navbar {
-    background: #fff;
+textarea {
+    resize: none;
+}
+
+.btn:focus, .btn:active:focus, .btn.active:focus,
+.btn.focus, .btn:active.focus, .btn.active.focus,
+.bootstrap-select .btn:focus, a:focus {
+    outline: none;
 }
 
 .navbar-right {
     margin-right: 15px;
 }
 
-input, textarea {
-    outline: none;
-    border: solid 1px #2c3e50;
-}
-
-textarea {
-    resize: none;
-}
-
-header {
-    border-bottom: solid 1px rgba(44, 62, 80, 0.15);
-}
-
-header h1 {
-    margin: 0 0 8px 40px;
-    color: #2c3e50;
-    font-family: 'Oswald', sans-serif;
-    font-size: 36px;
-}
-
-.lyrics_form {
+.lyrics-form {
     margin: 8px 0 8px 0;
 }
 
-.lyrics_form p {
+.lyrics-form p {
     margin-top: 8px;
     font-size: 0.8em;
 }
@@ -39,7 +25,7 @@ header h1 {
     width: 100%;
 }
 
-.new_entry {
+.new-entry {
     background: #eee;
     width: 100%;
     height: 96px;
@@ -47,6 +33,6 @@ header h1 {
     padding: 4px;
 }
 
-.new_entry h2 {
+.new-entry h2 {
     margin: 0;
 }
