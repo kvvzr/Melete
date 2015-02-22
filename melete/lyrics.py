@@ -105,7 +105,7 @@ def pair(bars, rhythm_tree):
         moras = split_by_mora(''.join(bar))
         pattern = filter(lambda p: len(p) == len(moras), rhythm_tree.patterns)
         if len(pattern) != 1:
-            raise
+            raise ValueError('This rhythm pattern does not match this lyric')
         pattern = map(lambda o: o + offset, pattern[0])
         result.append(zip(moras, pattern))
         offset += 1
