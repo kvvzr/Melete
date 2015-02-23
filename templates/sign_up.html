@@ -4,7 +4,15 @@
 
 {% block body %}
     <form class='form-inline' action='/sign_up' method='POST'>
-        <label for='name'>ID</label>
-        <input type='text' class='form-control' name='name' />
+        <div class='melete-form col-sm-8 col-sm-offset-2'>
+            <h2>新規登録</h2>
+            <p>
+            登録すると, 作曲機能が使えるようになります.<br />
+            登録の際は<a href=''>利用規約</a>をよくお読みください.
+            </p>
+            <input type='text' class='form-control' name='name' style='width: 100%;' placeholder='ID'></input>
+            <textarea type='text' class='form-control' name='bio' style='width: 100%;' placeholder='自己紹介'></textarea>
+                <button type='submit' class='btn pull-right btn-primary'>利用規約に同意して登録</button>
+        </div>
     </form>
 {% endblock %}

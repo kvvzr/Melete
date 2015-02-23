@@ -4,6 +4,11 @@
     $(document).ready(function() {
         loadPicker();
 
+        $('#btn-sample').on('click', function(event) {
+            $('#music-title').val('サンプル音楽');
+            $('#music-lyrics').val('ここに漢字仮名交じりの歌詞を入力して\n===\nこうやって歌詞を区切ることができます\n===\nスペースで 小節を 細かく 分けられます');
+        });
+
         $('#btn-analyze').on('click', function(event) {
             if (!$('#music-title').val() || !$('#music-lyrics').val()) {
                 return;

@@ -1,24 +1,66 @@
+body {
+    background: #f1f5f5;
+    padding-top: 45px !important;
+}
+
 textarea {
     resize: none;
 }
 
 .btn:focus, .btn:active:focus, .btn.active:focus,
 .btn.focus, .btn:active.focus, .btn.active.focus,
+.bootstrap-select,
 .bootstrap-select .btn:focus, a:focus {
     outline: none;
+}
+
+.navbar {
+    background: #e74c3c;
 }
 
 .navbar-right {
     margin-right: 15px;
 }
 
-.lyrics-form {
-    margin: 8px 0 8px 0;
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border: none;
 }
 
-.lyrics-form p {
-    margin-top: 8px;
-    font-size: 0.8em;
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    background: #d23f29;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    background: #d23f29;
+}
+
+.navbar-default .dropdown-menu > li > a {
+    background: #d23f29;
+}
+
+.navbar-default .dropdown-menu {
+    background: #d23f29;
+}
+
+.icon-bar {
+    background: #fff !important;
+}
+
+.btn-default {
+    background: #fff;
+}
+
+.form-control {
+    color: #333;
+}
+
+.navbar-icon {
+    border-radius: 4px;
+    margin-right: 4px;
+    width: 20px;
 }
 
 .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
@@ -26,7 +68,7 @@ textarea {
 }
 
 .new-entry {
-    background: #eee;
+    background: #dbe4e4;
     width: 100%;
     height: 96px;
     margin-top: 8px;
@@ -35,4 +77,50 @@ textarea {
 
 .new-entry h2 {
     margin: 0;
+}
+
+.melete-form h2 h3 {
+    margin: 16px 0 8px 0;
+}
+
+.melete-form h3 {
+    font-size: 1.2em;
+}
+
+.melete-form p {
+    margin: 8px 0 16px 0;
+    color: #555;
+}
+
+.melete-form audio {
+    margin: 8px 0 8px 0;
+}
+
+.melete-form input,
+.melete-form textarea {
+    margin: 8px 0 8px 0;
+}
+
+.melete-form small {
+    margin-top: 8px;
+    font-size: 0.8em;
+}
+
+.melete-text {
+    background: #dbe4e4;
+    padding: 6px;
+    border-radius: 2px;
+}
+
+.flashes {
+    width: 100%;
+    background: #3d95e5;
+    color: #fff;
+    list-style:none;
+    margin: 0;
+    padding: 0;
+}
+
+.flashes li {
+    margin: 0 16px 0 16px;
 }

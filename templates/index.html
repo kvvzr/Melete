@@ -8,17 +8,26 @@
 
 {% block body %}
     <div id='composer' class='carousel slide' data-ride='carousel' data-interval=''>
-        <div class='carousel-inner'>
+        <div class='carousel-inner melete-form'>
             <div class='item active'>
-                <input id='music-title' class='form-control lyrics-form' placeholder='タイトル'></textarea>
-                <textarea id='music-lyrics' class='form-control lyrics-form' rows='5' placeholder='歌詞'></textarea>
-                <button id='btn-analyze' class='btn pull-right btn-lg btn-primary'>詳細設定</button>
+                <h2>作曲</h2>
+                <p>
+                歌詞を入力して詳細設定に進むと, 曲のイメージや音韻を設定できます.
+                </p>
+                <input id='music-title' class='form-control' placeholder='タイトル'></input>
+                <textarea id='music-lyrics' class='form-control' rows='5' placeholder='歌詞'></textarea>
+                <button id='btn-sample' class='btn'>サンプル歌詞を入力</button>
+                <button id='btn-analyze' class='btn pull-right btn-primary'>詳細設定</button>
             </div>
             <div class='item'>
+                <h2>詳細設定</h2>
+                <p>
+                曲のイメージや音韻を設定できます.
+                </p>
                 <div id='tune-details'>
                 </div>
-                <button class='btn btn-lg btn-primary' href='#composer' data-slide='prev'>戻る</button>
-                <button id='btn-compose' class='btn pull-right btn-lg btn-primary'>作曲</button>
+                <button class='btn btn-primary' href='#composer' data-slide='prev'>戻る</button>
+                <button id='btn-compose' class='btn pull-right btn-primary'>作曲</button>
             </div>
         </div>
     </div>
@@ -26,9 +35,9 @@
     <script type='text/html' id='template-tunes'>
     <% for (var i = 0; i < tunes.length; i++) { %>
     <div class="row tune-detail">
-    <div class="col-sm-4 lyrics-form">
+    <div class="col-sm-4 melete-form">
     <div class="col-sm-6">
-    <p style="display: inline;">コード進行</p>
+    <small style="display: inline;">コード進行</small>
     <select id="chords-selector" class="selector">
     {% if chords %}
     {% for sc in chords %}
@@ -37,7 +46,7 @@
     {% endif %}
     </select>
     <br />
-    <p style="display: inline;">リズム</p>
+    <small style="display: inline;">リズム</small>
     <select id="rhythms-selector" class="selector">
     {% if rhythms %}
     {% for sr in rhythms %}
@@ -46,7 +55,7 @@
     {% endif %}
     </select>
     <br />
-    <p style="display: inline;">拍子</p>
+    <small style="display: inline;">拍子</small>
     <select id="time-selector" class="selector">
     <option data-content="<span data-nn=&quot;5&quot; data-dd=&quot;2&quot;>5 / 4</span>"></option>
     <option data-content="<span data-nn=&quot;4&quot; data-dd=&quot;2&quot;>4 / 4</span>">4 / 4</option>
@@ -55,26 +64,26 @@
     <br />
     </div>
     <div class="col-sm-6">
-    <p style="display: inline;">音域上限</p>
+    <small style="display: inline;">音域上限</small>
     <select id="range-high-selector" class="selector">
     <option data-content="<span data-range-high=&quot;93&quot;>hiA</span>"></option>
     </select>
     <br />
-    <p style="display: inline;">音域下限</p>
+    <small style="display: inline;">音域下限</small>
     <select id="range-low-selector" class="selector">
     <option data-content="<span data-range-low=&quot;72&quot;>mid2C</span>"></option>
     </select>
     <br />
-    <p style="display: inline;">BPM</p>
+    <small style="display: inline;">BPM</small>
     <input class="form-control tune-bpm" type="number" value="120">
     <br />
     </div>
     </div>
     <div class="col-sm-4">
-    <textarea class="form-control lyrics-form tune-lyric" rows="10" placeholder="歌詞"><%=tunes[i].lyric%></textarea>
+    <textarea class="form-control tune-lyric" rows="10" placeholder="歌詞"><%=tunes[i].lyric%></textarea>
     </div>
     <div class="col-sm-4">
-    <textarea class="form-control lyrics-form tune-phoneme" rows="10" placeholder="音韻"><%=tunes[i].phoneme%></textarea>
+    <textarea class="form-control tune-phoneme" rows="10" placeholder="音韻"><%=tunes[i].phoneme%></textarea>
     </div>
     </div>
     <% } %>

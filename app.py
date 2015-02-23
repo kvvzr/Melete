@@ -2,7 +2,7 @@
 
 import os, config
 from functools import wraps
-from flask import Flask, request, json, jsonify, render_template, send_from_directory, g, session, url_for, redirect
+from flask import Flask, request, json, jsonify, render_template, send_from_directory, g, session, url_for, redirect, flash
 from flask_oauthlib.client import OAuth
 import mido
 import melete.lyrics as Lyrics
@@ -84,6 +84,7 @@ def index():
     return render_template(
         'index.html',
         login_icon_path=login_icon_path,
+        user_name=session['user_name'] if 'user_name' in session else None,
         rhythms=stared_rhythms,
         chords=stared_chords
     )
@@ -110,6 +111,7 @@ def watch(id):
         lyrics=lyrics,
         media_path=media_path,
         login_icon_path=login_icon_path,
+        user_name=session['user_name'] if 'user_name' in session else None,
         icon_path=icon_path
     )
 
@@ -123,7 +125,21 @@ def icons(path):
 
 @app.route('/users/<name>')
 def users(name):
-    pass
+    login_icon_path = None
+
+    user = Users.query.filter_by(name=name).first()
+
+    if 'user_id' in session:
+        login_icon_path = get_icon(session['user_id'])
+
+    musics = Musics.query.order_by(Musics.id.desc()).filter_by(user_id=user.id).limit(20).all()
+    return render_template(
+        'user.html',
+        login_icon_path=login_icon_path,
+        user_name=session['user_name'] if 'user_name' in session else None,
+        user=user,
+        musics=musics
+    )
 
 @app.route('/rhythms/<int:id>')
 def rhythms(id):
@@ -148,7 +164,13 @@ def new_entry():
     if 'user_id' in session:
         login_icon_path = get_icon(session['user_id'])
     musics = Musics.query.order_by(Musics.id.desc()).limit(20).all()
-    return render_template('new_entry.html', login_icon_path=login_icon_path, musics=musics)
+
+    return render_template(
+        'new_entry.html',
+        login_icon_path=login_icon_path,
+        user_name=session['user_name'] if 'user_name' in session else None,
+        musics=musics
+    )
 
 @app.route('/login')
 def login():
@@ -198,6 +220,7 @@ def sign_up():
 def logout():
     session.pop('twitter_oauth', None)
     session.pop('user_id', None)
+    session.pop('user_name', None)
     return redirect(url_for('index'))
 
 @app.route('/oauthorized')
@@ -212,6 +235,7 @@ def oauthorized():
         return redirect(url_for('sign_up'))
 
     session['user_id'] = user.id
+    session['user_name'] = user.name
 
     return redirect(url_for('index'))
 

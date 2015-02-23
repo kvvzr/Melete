@@ -3,12 +3,23 @@
 {% block title %}{{ title }} | {% endblock %}
 
 {% block body %}
-    {% if icon_path %}
-        <img src='/icons/{{ icon_path }}' />
-    {% endif %}
-    <h1>{{ title }}</h1>
-    {% if media_path %}
-        <audio src='/media/{{ media_path }}' controls></audio>
-    {% endif %}
-    <p style='background: #eee'>{{ lyrics|join('<br>'|safe) }}</p>
+    <div class='melete-form'>
+        <div style='margin: 16px 0 8px 0;'>
+        {% if icon_path %}<img src='/icons/{{ icon_path }}' style='display: inline;' />{% endif %}
+        <h2 style='display: inline; vertical-align: middle; margin-left: 8px;'>
+            {{ title }}
+        </h2>
+        <button class='btn pull-right'>お気に入り</button>
+        <button class='btn pull-right'>フォーク</button>
+        <button class='btn pull-right'>編集</button>
+        </div>
+        <p>2015/1/1 0:00 | 再生: 100 | コメント: 10</p>
+        {% if media_path %}
+            <audio src='/media/{{ media_path }}' controls></audio>
+        {% endif %}
+        <h3>説明文</h3>
+        <p class='melete-text'></p>
+        <h3>歌詞</h3>
+        <p class='melete-text'>{{ lyrics|join('<br>'|safe) }}</p>
+    </div>
 {% endblock %}
