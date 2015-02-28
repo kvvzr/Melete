@@ -70,13 +70,14 @@ textarea {
 .new-entry {
     background: #dbe4e4;
     width: 100%;
-    height: 96px;
+    height: 64px;
     margin-top: 8px;
     padding: 4px;
 }
 
 .new-entry h2 {
     margin: 0;
+    font-size: 1.2em;
 }
 
 .melete-form h2 h3 {
@@ -96,7 +97,6 @@ textarea {
     margin: 8px 0 8px 0;
 }
 
-.melete-form input,
 .melete-form textarea {
     margin: 8px 0 8px 0;
 }

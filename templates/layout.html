@@ -45,7 +45,7 @@
                 <!-- </form>                                                                        -->
                 {% if session.user_id %}
                     {% if login_icon_path %}
-                        <ul class="nav navbar-nav navbar-right">
+                        <ul class="nav navbar-nav navbar-right hidden-xs">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     <img src='/icons/{{ login_icon_path }}' class='navbar-icon' />
@@ -59,10 +59,17 @@
                             </li>
                         </ul>
                     {% endif %}
+                    <ul class='nav navbar-nav visible-xs'>
+                        <li><a href="/users/{{ user_name }}">マイページ</a></li>
+                        <li><a href="/logout">ログアウト</a></li>
+                    </ul>
                 {% else %}
-                <ul class='nav navbar-nav navbar-right'>
-                    <li><a href='/login'>ログイン</a></li>
-                </ul>
+                    <ul class='nav navbar-nav navbar-right hidden-xs'>
+                        <li><a href='/login'>ログイン</a></li>
+                    </ul>
+                    <ul class='nav navbar-nav visible-xs'>
+                        <li><a href='/login'>ログイン</a></li>
+                    </ul>
                 {% endif %}
             </div>
         </div>
