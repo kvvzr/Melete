@@ -2,7 +2,7 @@
 
 Melete is a web service of automatic composition based on the way of [Orpheus](http://www.orpheus-music.org/v3/).
 
-## Instration
+## Installation
 
 ```
 $ git clone https://github.com/kvvzr/Melete
