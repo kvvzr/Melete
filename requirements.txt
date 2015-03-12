@@ -6,3 +6,4 @@ requests
 mido==1.1.12
 sure==1.2.8
 mecab-python
+gunicorn
