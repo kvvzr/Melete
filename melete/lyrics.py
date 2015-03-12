@@ -47,18 +47,18 @@ def analyze(text):
         for phrase in phrases:
             for word in mecab.parse(phrase).decode('utf-8').split('\n'):
                 features = word.split('\t')
-                if len(features) == 10:
+                if len(features) == 3:
                     atypes = []
                     acons = []
                     try:
                         # アクセント型
-                        atypes = map(lambda n: unicodedata.decimal(n), features[-2].split(','))
-                        acons = features[-1].split(',')
+                        atypes = map(lambda n: unicodedata.decimal(n), features[1].split(','))
+                        acons = features[2].split(',')
                     except TypeError:
                         # アクセントが不明
                         pass
 
-                    prono = features[1] # 読み
+                    prono = features[0] # 読み
                     if not prono or not re.match(ok_chars, prono):
                         continue
 
