@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re, unicodedata
+import os, re, unicodedata
 from operator import add
 import MeCab
 import melete.rhythm as Rhythm
@@ -12,6 +12,7 @@ small_kana = u'\u30a1\u30a3\u30a5\u30a7\u30a7\u30e3\u30e5\u30e7\u30ee'
 phrase_split_chars_uni = re.compile(u'[。、,.]')
 ok_chars = re.compile(u'[' + kana + small_kana + ']')
 mora_pattern = re.compile(u'([' + kana + ']?[' + small_kana + ']?[\^_]?)')
+mecab_dicdir = os.path.dirname(MeCab.Tagger().dictionary_info().filename)
 
 def split_by_mora(kana):
     return filter(lambda i: i, re.split(mora_pattern, kana))
@@ -31,7 +32,7 @@ def insert_accent(kana, atype):
 
 def analyze(text):
     results = []
-    mecab = MeCab.Tagger('-Ounidic')
+    mecab = MeCab.Tagger('-Ounidic -d %s -r dicrc' % mecab_dicdir)
 
     # 小節単位に分割
     text = text.strip()
@@ -47,13 +48,13 @@ def analyze(text):
         for phrase in phrases:
             for word in mecab.parse(phrase).decode('utf-8').split('\n'):
                 features = word.split('\t')
-                if len(features) == 3:
+                if len(features) == 4:
                     atypes = []
                     acons = []
                     try:
                         # アクセント型
-                        atypes = map(lambda n: unicodedata.decimal(n), features[1].split(','))
-                        acons = features[2].split(',')
+                        atypes = map(lambda n: unicodedata.decimal(n), features[2].split(','))
+                        acons = features[3].split(',')
                     except TypeError:
                         # アクセントが不明
                         pass

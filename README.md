@@ -26,10 +26,7 @@ $ brew link mysql55 --force
 
 ```
 $ brew install mecab kvvzr/mecab-unidic/mecab-unidic
-$ vim $(brew --cellar)/mecab/0.996/lib/mecab/dic/unidic/dicrc
 ```
-
-Assign `f[9]\t%f[23]\t%f[24]\n` to `node-format-unidic`
 
 #### Install Python libraries
 
