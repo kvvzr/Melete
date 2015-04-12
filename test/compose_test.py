@@ -20,13 +20,12 @@ lyrics = Lyrics.analyze(text)
 lyrics = map(lambda l: Lyrics.divide(l['phoneme'], tree), lyrics)
 beats = map(lambda l: Lyrics.pair(l, tree), lyrics)
 
-f7 = Chord.Chord.from_name('FM7')
-gd7 = Chord.Chord.from_name('G7')
-gd7.inversion(1)
-em7 = Chord.Chord.from_name('E7')
-am = Chord.Chord.from_name('Am')
-am.inversion(1)
-prog = Chord.ChordProg(48, 4, [(f7, 0), (gd7, 192), (em7, 384), (am, 576)])
+c = Chord.Chord.from_name('C')
+f = Chord.Chord.from_name('F')
+f.inversion(1)
+gsus4 = Chord.Chord.from_name('Gsus4')
+gsus4.inversion(1)
+prog = Chord.ChordProg(48, 4, [(c, 0), (f, 192), (gsus4, 384), (c, 576)])
 
 note_range = range(Chord.Scale.from_name('C4').note, Chord.Scale.from_name('A5').note)
 
@@ -35,4 +34,8 @@ with mido.MidiFile(ticks_per_beat=48, charset='utf-8') as midi:
         composer = Melody.Composer(ts, beat, prog, note_range, 0.5, 180)
         midi = Melody.concat_midi(midi, composer.compose())
 savepath = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(16)]) + '.mid'
+
+if not os.path.exists('log'):
+    os.makedirs('log')
+
 midi.save('log/' + savepath)
