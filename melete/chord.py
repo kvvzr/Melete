@@ -16,14 +16,42 @@ class Chord:
             self.sounds.extend([root, root + 4, root + 7])
         if chord_type == 'm':
             self.sounds.extend([root, root + 3, root + 7])
+        if chord_type == '-5':
+            self.sounds.extend([root, root + 4, root + 6])
         if chord_type == 'dim':
             self.sounds.extend([root, root + 3, root + 6])
+        if chord_type == 'sus4':
+            self.sounds.extend([root, root + 5, root + 7])
+        if chord_type == 'aug':
+            self.sounds.extend([root, root + 4, root + 8])
+        if chord_type == '6':
+            self.sounds.extend([root, root + 4, root + 7, root + 9])
+        if chord_type == 'm6':
+            self.sounds.extend([root, root + 3, root + 7, root + 9])
         if chord_type == '7':
             self.sounds.extend([root, root + 4, root + 7, root + 10])
-        if chord_type == 'm7':
-            self.sounds.extend([root, root + 3, root + 7, root + 10])
         if chord_type == 'M7':
             self.sounds.extend([root, root + 4, root + 7, root + 11])
+        if chord_type == 'm7':
+            self.sounds.extend([root, root + 3, root + 7, root + 10])
+        if chord_type == '7-5':
+            self.sounds.extend([root, root + 4, root + 6, root + 10])
+        if chord_type == 'dim7':
+            self.sounds.extend([root, root + 3, root + 6, root + 9])
+        if chord_type == '7sus4':
+            self.sounds.extend([root, root + 5, root + 7, root + 10])
+        if chord_type == 'aug7':
+            self.sounds.extend([root, root + 4, root + 8, root + 10])
+        if chord_type == 'augM7':
+            self.sounds.extend([root, root + 4, root + 8, root + 11])
+        if chord_type == 'add9':
+            self.sounds.extend([root, root + 4, root + 7, root + 14])
+        if chord_type == 'mM7':
+            self.sounds.extend([root, root + 3, root + 7, root + 11])
+        if chord_type == 'add2':
+            self.sounds.extend([root, root + 2, root + 4, root + 7])
+        if chord_type == 'add4':
+            self.sounds.extend([root, root + 4, root + 5, root + 7])
 
     def inversion(self, count):
         for i in range(count):
