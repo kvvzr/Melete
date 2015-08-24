@@ -2,7 +2,11 @@
 
 import os, config
 from functools import wraps
-from flask import Flask, request, json, jsonify, render_template, send_from_directory, g, session, url_for, redirect, flash
+from flask import (
+        Flask, request, json, jsonify,
+        render_template, send_from_directory,
+        session, url_for, redirect
+    )
 from flask_oauthlib.client import OAuth
 import mido
 import melete.lyrics as Lyrics
@@ -26,16 +30,12 @@ if not os.path.exists(app.config['MEDIA_FOLDER']):
 if not os.path.exists(app.config['ICONS_FOLDER']):
     os.makedirs(app.config['ICONS_FOLDER'])
 
-# models
+# router utils
 from melete.models import *
+from melete.login_util import *
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if g.user is None:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
+def get_user_name():
+    return session['user_name'] if 'user_name' in session else None
 
 def get_icon(user_id):
     login_icon_path = None
@@ -45,46 +45,27 @@ def get_icon(user_id):
             login_icon_path = login_user.icon_path
     return login_icon_path
 
-# oauth
-oauth = OAuth(app)
+def get_login_icon():
+    return get_icon(session['user_id']) if 'user_id' in session else None
 
-twitter = oauth.remote_app(
-    'twitter',
-    consumer_key=config.twitter['consumer_key'],
-    consumer_secret=config.twitter['consumer_secret'],
-    base_url='https://api.twitter.com/1.1/',
-    request_token_url='https://api.twitter.com/oauth/request_token',
-    access_token_url='https://api.twitter.com/oauth/access_token',
-    authorize_url='https://api.twitter.com/oauth/authenticate',
-)
+# resource
+@app.route('/media/<path>')
+def media(path):
+    return send_from_directory(app.config['MEDIA_FOLDER'], path)
 
-@twitter.tokengetter
-def get_twitter_token():
-    if 'twitter_oauth' in session:
-        res = session['twitter_oauth']
-        return res['oauth_token'], res['oauth_token_secret']
-
-@app.before_request
-def before_request():
-    g.user = None
-    if 'twitter_oauth' in session:
-        g.user = session['twitter_oauth']
+@app.route('/icons/<path>')
+def icons(path):
+    return send_from_directory(app.config['ICONS_FOLDER'], path)
 
 # router
 @app.route('/')
 def index():
-    login_icon_path = None
-    stared_rhythms = None
-    stared_chords = None
-
-    if 'user_id' in session:
-        login_icon_path = get_icon(session['user_id'])
-        stared_rhythms = StaredRhythms.query.filter_by(user_id=session['user_id']).all()
-        stared_chords = StaredChords.query.filter_by(user_id=session['user_id']).all()
+    stared_rhythms = StaredRhythms.query.filter_by(user_id=session['user_id']).all() if 'user_id' in session else None
+    stared_chords = StaredChords.query.filter_by(user_id=session['user_id']).all() if 'user_id' in session else None
     return render_template(
         'index.html',
-        login_icon_path=login_icon_path,
-        user_name=session['user_name'] if 'user_name' in session else None,
+        login_icon_path=get_login_icon(),
+        user_name=get_user_name(),
         rhythms=stared_rhythms,
         chords=stared_chords
     )
@@ -95,48 +76,27 @@ def watch(id):
     data = json.loads(music.data)
     lyrics = map(lambda t: t['lyric'], data)
 
-    media_path = None
-    if music.media_path:
-        media_path = music.media_path + '.mp3'
-
-    login_icon_path = None
-    if 'user_id' in session:
-        login_icon_path = get_icon(session['user_id'])
-
+    media_path = music.media_path + '.mp3' if music.media_path else None
     icon_path = get_icon(music.user_id)
 
     return render_template(
         'watch.html',
+        login_icon_path=get_login_icon(),
+        user_name=get_user_name(),
         title=music.name,
         lyrics=lyrics,
         media_path=media_path,
-        login_icon_path=login_icon_path,
-        user_name=session['user_name'] if 'user_name' in session else None,
         icon_path=icon_path
     )
 
-@app.route('/media/<path>')
-def media(path):
-    return send_from_directory(app.config['MEDIA_FOLDER'], path)
-
-@app.route('/icons/<path>')
-def icons(path):
-    return send_from_directory(app.config['ICONS_FOLDER'], path)
-
 @app.route('/users/<name>')
 def users(name):
-    login_icon_path = None
-
     user = Users.query.filter_by(name=name).first()
-
-    if 'user_id' in session:
-        login_icon_path = get_icon(session['user_id'])
-
     musics = Musics.query.order_by(Musics.id.desc()).filter_by(user_id=user.id).limit(20).all()
     return render_template(
         'user.html',
-        login_icon_path=login_icon_path,
-        user_name=session['user_name'] if 'user_name' in session else None,
+        login_icon_path=get_login_icon(),
+        user_name=get_user_name(),
         user=user,
         musics=musics
     )
@@ -159,27 +119,18 @@ def ranking():
 
 @app.route('/new_entry')
 def new_entry():
-    login_icon_path = None
-
-    if 'user_id' in session:
-        login_icon_path = get_icon(session['user_id'])
     musics = Musics.query.order_by(Musics.id.desc()).limit(20).all()
 
     return render_template(
         'new_entry.html',
-        login_icon_path=login_icon_path,
-        user_name=session['user_name'] if 'user_name' in session else None,
+        login_icon_path=get_login_icon(),
+        user_name=get_user_name(),
         musics=musics
     )
 
 @app.route('/login')
 def login():
     return render_template('login.html')
-
-@app.route('/login/twitter')
-def login_twitter():
-    callback_url = url_for('oauthorized', next=request.args.get('next'))
-    return twitter.authorize(callback=callback_url or request.referrer or None)
 
 @app.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
@@ -223,22 +174,7 @@ def logout():
     session.pop('user_name', None)
     return redirect(url_for('index'))
 
-@app.route('/oauthorized')
-def oauthorized():
-    res = twitter.authorized_response()
-    if res is None:
-        return redirect(url_for('index'))
-    session['twitter_oauth'] = res
-
-    user = Users.query.filter_by(twitter_id=res['user_id']).first()
-    if user is None:
-        return redirect(url_for('sign_up'))
-
-    session['user_id'] = user.id
-    session['user_name'] = user.name
-
-    return redirect(url_for('index'))
-
+# API
 @app.route('/analyze_lyrics', methods=['POST'])
 @login_required
 def analyze_lyrics():

@@ -22,15 +22,14 @@
         });
 
         $('#btn-compose').on('click', function(event) {
-            var chords_id = $('[data-id=chords-selector] > span > span').data('id');
-            var rhythms_id = $('[data-id=rhythms-selector] > span > span').data('id');
-            var nn = $('[data-id=time-selector] > span > span').data('nn');
-            var dd = $('[data-id=time-selector] > span > span').data('dd');
-            var range_high = $('[data-id=range-high-selector] > span > span').data('range-high');
-            var range_low = $('[data-id=range-low-selector] > span > span').data('range-low');
-
             var data = [];
             $('.tune-detail').each(function(index, tune) {
+                var chords_id = $('[data-id=chords-selector] > span > span', tune).data('id');
+                var rhythms_id = $('[data-id=rhythms-selector] > span > span', tune).data('id');
+                var nn = $('[data-id=time-selector] > span > span', tune).data('nn');
+                var dd = $('[data-id=time-selector] > span > span', tune).data('dd');
+                var range_high = $('[data-id=range-high-selector] > span > span', tune).data('range-high');
+                var range_low = $('[data-id=range-low-selector] > span > span', tune).data('range-low');
                 data.push({
                     lyric: $('.tune-lyric', tune).val(),
                     phoneme: $('.tune-phoneme', tune).val(),
