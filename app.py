@@ -60,8 +60,11 @@ def icons(path):
 # router
 @app.route('/')
 def index():
-    stared_rhythms = StaredRhythms.query.filter_by(user_id=session['user_id']).all() if 'user_id' in session else None
-    stared_chords = StaredChords.query.filter_by(user_id=session['user_id']).all() if 'user_id' in session else None
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    stared_rhythms = StaredRhythms.query.filter_by(user_id=session['user_id']).all()
+    stared_chords = StaredChords.query.filter_by(user_id=session['user_id']).all()
     return render_template(
         'index.html',
         login_icon_path=get_login_icon(),
