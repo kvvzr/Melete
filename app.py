@@ -177,6 +177,10 @@ def logout():
     session.pop('user_name', None)
     return redirect(url_for('index'))
 
+@app.route('/terms_of_use')
+def terms_of_use():
+    return render_template('terms_of_use.html')
+
 # API
 @app.route('/analyze_lyrics', methods=['POST'])
 @login_required
