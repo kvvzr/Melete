@@ -104,6 +104,10 @@ def users(name):
         musics=musics
     )
 
+@app.route('/rhythm_creator')
+def rhythm_creator():
+    return render_template('rhythm_creator.html')
+
 @app.route('/rhythms/<int:id>')
 def rhythms(id):
     pass
