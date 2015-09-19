@@ -12,17 +12,7 @@
     <div class='melete-form'>
         <h2>リズムを作成</h2>
         <p></p>
-        <div class='rc-container'>
-            <select id='mora-selector' class='selector'>
-                <option data-content="<span data-mora=&quot;8&quot;>8モーラ</span>"></option>
-                <option data-content="<span data-mora=&quot;16&quot;>16モーラ</span>"></option>
-                <option data-content="<span data-mora=&quot;32&quot;>32モーラ</span>"></option>
-            </select>
-            <select id='time-selector' class='selector'>
-                <option data-content="<span data-time=&quot;1&quot;>1小節</span>"></option>
-                <option data-content="<span data-time=&quot;2&quot;>2小節</span>"></option>
-            </select>
-        </div>
+        <div id='rc-container'></div>
         <button id='btn-create' class='btn pull-right btn-primary'>作成</button>
     </div>
 {% endblock %}

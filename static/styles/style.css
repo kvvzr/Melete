@@ -125,11 +125,11 @@ textarea {
     margin: 0 16px 0 16px;
 }
 
-.rc-container .bootstrap-select {
+#rc-container .bootstrap-select {
     margin-bottom: 8px;
 }
 
-.rc-container p {
+#rc-container p {
     margin-bottom: 4px;
 }
 
