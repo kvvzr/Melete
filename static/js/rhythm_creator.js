@@ -63,19 +63,29 @@
 
                 p.draw = function() {
                     p.background(192);
+
+                    p.rect(1, 1, p.height - 1, p.height - 2);
+                    p.push();
+                    p.fill(192);
+                    p.translate(p.height / 2 - 2, p.height / 2);
+                    p.rotate(p.radians(-30));
+                    p.scale(p.height / 2);
+                    p.triangle(0, -0.43, -0.5, 0.43, 0.5, 0.43);
+                    p.pop();
+
                     for (var i = 0; i < mora * time; i++) {
                         if (p.rhythms[i]) {
                             p.fill(219, 228, 228);
                         } else {
                             p.fill(255);
                         }
-                        p.rect(i * (p.width - 1) / (mora * time) + 1, 1, (p.width - 1) / (mora * time) - 1, p.height - 2);
+                        p.rect(i * (p.width - p.height - 1) / (mora * time) + p.height + 1, 1, (p.width - p.height - 1) / (mora * time) - 1, p.height - 2);
                     }
                 };
 
                 p.mousePressed = function() {
                     for (var i = 0; i < mora * time; i++) {
-                        if (i * p.width / (mora * time) < p.mouseX && p.mouseX < (i + 1) * p.width / (mora * time) && 1 < p.mouseY && p.mouseY < p.height) {
+                        if (i * (p.width - p.height) / (mora * time) + p.height < p.mouseX && p.mouseX < (i + 1) * (p.width - p.height) / (mora * time) + p.height && 1 < p.mouseY && p.mouseY < p.height) {
                             p.rhythms[i] = !p.rhythms[i];
                         }
                     }
