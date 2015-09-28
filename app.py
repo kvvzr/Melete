@@ -241,5 +241,23 @@ def compose():
         return ('Error: %s' % e, 500)
     return (jsonify({'music_id': music.id}), 200)
 
+@app.route('/rhythm', methods=['POST'])
+@login_required
+def rhythm():
+    user_id = session['user_id']
+    data = json.loads(request.form['data'])
+    ts = Rhythm.TimeSignature(int(data['nn']), int(data['dd']))
+    tree = Rhythm.RhythmTree(int(data['division']), int(data['time']), ts, data['patterns'])
+    rhythm = Rhythms('Test', json.dumps(tree.to_dict()), user_id)
+    db.session.add(rhythm)
+    db.session.commit()
+
+    # とりあえず作ったリズムをStarしていく運用
+    sr = StaredRhythms(rhythm.id, user_id)
+    db.session.add(sr)
+    db.session.commit()
+
+    return (jsonify({'rhythm_id': rhythm.id}), 200)
+
 if __name__ == '__main__':
     manager.run()

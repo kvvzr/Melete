@@ -38,6 +38,11 @@ class Rhythms(db.Model):
     status = db.Column(db.String(255), nullable=True, default=None)
     media_path = db.Column(db.String(255), nullable=True, default=None)
 
+    def __init__(self, name, data, user_id):
+        self.name = name
+        self.data = data
+        self.user_id = user_id
+
 class Chords(db.Model):
     __tablename__ = 'chords'
     id = db.Column(db.Integer, primary_key=True)

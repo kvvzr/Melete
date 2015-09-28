@@ -7,6 +7,8 @@
     var mora = 8;
     var time = 1;
 
+    var rhythms = [];
+
     $(document).ready(function() {
         initCreator(mora, time);
     });
@@ -43,7 +45,30 @@
             initCreator(mora, time);
         });
 
-        for (var i = 0; i < mora - 1; i++) {
+        $('#btn-create').off('click');
+        $('#btn-create').on('click', function(event) {
+            var pats = [[]];
+            for (var j = 0; j < mora; j++) {
+                var pat = [];
+                for (var i = 0; i < mora * time; i++) {
+                    if (rhythms[j][i]) {
+                        pat.push(i * 48 * 4 / mora);
+                    }
+                }
+                pats.push(pat);
+            }
+            var data = {
+                division: 48,
+                patterns: pats,
+                nn: 4,
+                dd: 2,
+                time: time
+            };
+            $.post('/rhythm', {data: JSON.stringify(data)});
+        });
+
+        rhythms = new Array(mora);
+        for (var i = 0; i < mora; i++) {
             $container.append('<p>' + (i + 1) + 'モーラ</p>');
             $container.append("<div class='rhythm-creator'></div>");
         }
@@ -51,13 +76,14 @@
         for (var j = 0; j < $rhythm_creators.length; j++) {
             var $node = $rhythm_creators.eq(j);
             new p5(function(p) {
-                p.rhythms = [];
+                p.id = j;
 
                 p.setup = function() {
                     p.createCanvas($node.width(), $node.height());
                     p.noStroke();
+                    rhythms[p.id] = new Array(mora * time);
                     for (var i = 0; i < mora * time; i++) {
-                        p.rhythms[i] = false;
+                        rhythms[p.id][i] = false;
                     }
                 };
 
@@ -74,7 +100,7 @@
                     p.pop();
 
                     for (var i = 0; i < mora * time; i++) {
-                        if (p.rhythms[i]) {
+                        if (rhythms[p.id][i]) {
                             p.fill(219, 228, 228);
                         } else {
                             p.fill(255);
@@ -86,7 +112,7 @@
                 p.mousePressed = function() {
                     for (var i = 0; i < mora * time; i++) {
                         if (i * (p.width - p.height) / (mora * time) + p.height < p.mouseX && p.mouseX < (i + 1) * (p.width - p.height) / (mora * time) + p.height && 1 < p.mouseY && p.mouseY < p.height) {
-                            p.rhythms[i] = !p.rhythms[i];
+                            rhythms[p.id][i] = !rhythms[p.id][i];
                         }
                     }
                 };
