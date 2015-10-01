@@ -12,7 +12,8 @@ small_kana = u'\u30a1\u30a3\u30a5\u30a7\u30a7\u30e3\u30e5\u30e7\u30ee'
 phrase_split_chars_uni = re.compile(u'[。、,.]')
 ok_chars = re.compile(u'[' + kana + small_kana + ']')
 mora_pattern = re.compile(u'([' + kana + ']?[' + small_kana + ']?[\^_]?)')
-mecab_dicdir = os.path.dirname(MeCab.Tagger().dictionary_info().filename)
+temp_tagger = MeCab.Tagger()
+mecab_dicdir = os.path.dirname(temp_tagger.dictionary_info().filename)
 
 def split_by_mora(kana):
     return filter(lambda i: i, re.split(mora_pattern, kana))

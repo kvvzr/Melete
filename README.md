@@ -15,13 +15,6 @@ $ git clone https://github.com/kvvzr/Melete
 - Homebrew
 - Python (2.7.x)
 
-#### Install MySQL
-
-```
-$ brew install mysql55
-$ brew link mysql55 --force
-```
-
 #### Install Mecab and UniDic
 
 ```
