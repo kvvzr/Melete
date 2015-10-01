@@ -1,4 +1,4 @@
-import inspect, config
+import os, inspect, config
 from functools import wraps
 from flask import (
         request, 
@@ -20,8 +20,8 @@ def login_required(f):
 
 twitter = oauth.remote_app(
     'twitter',
-    consumer_key=config.twitter['consumer_key'],
-    consumer_secret=config.twitter['consumer_secret'],
+    consumer_key=os.environ.get('TWITTER_API_KEY') if 'TWITTER_API_KEY' in os.environ else config.twitter['consumer_key'],
+    consumer_secret=os.environ.get('TWITTER_API_SECRET') if 'TWITTER_API_SECRET' in os.environ else config.twitter['consumer_secret'],
     base_url='https://api.twitter.com/1.1/',
     request_token_url='https://api.twitter.com/oauth/request_token',
     access_token_url='https://api.twitter.com/oauth/access_token',
