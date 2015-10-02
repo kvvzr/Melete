@@ -68,7 +68,9 @@
             if (title.length == 0) {
                 return;
             }
-            $.post('/rhythm', {title: title, data: JSON.stringify(data)});
+            $.post('/rhythm', {title: title, data: JSON.stringify(data)}).done(function(data) {
+                location.href = '/rhythms/' + data.rhythm_id
+            });
         });
 
         rhythms = new Array(mora);

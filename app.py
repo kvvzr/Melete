@@ -110,7 +110,17 @@ def rhythm_creator():
 
 @app.route('/rhythms/<int:id>')
 def rhythms(id):
-    pass
+    rhythm = Rhythms.query.get(id)
+
+    if not rhythm:
+        return ('', 500)
+
+    return render_template(
+        'rhythm.html',
+        login_icon_path=get_login_icon(),
+        user_name=get_user_name(),
+        rhythm=rhythm
+    )
 
 @app.route('/chords/<int:id>')
 def chords(id):
@@ -260,6 +270,28 @@ def rhythm():
     except ValueError as e:
         return ('Error: %s' % e, 500)
     return (jsonify({'rhythm_id': rhythm.id}), 200)
+
+@app.route('/star_rhythm', methods=['POST'])
+@login_required
+def star_rhythm():
+    user_id = session['user_id']
+    rhythm_id = int(request.form['rhythm_id'])
+
+    rhythm = Rhythms.query.get(rhythm_id)
+    if not rhythm:
+        return ('', 500)
+
+    ex_sr = StaredRhythms.query.filter_by(rhythms_id=rhythm_id).filter_by(user_id=user_id).first()
+    if ex_sr:
+        db.session.delete(ex_sr)
+        db.session.commit()
+        return ('', 200)
+
+    sr = StaredRhythms(rhythm_id, user_id)
+    db.session.add(sr)
+    db.session.commit()
+
+    return ('', 200)
 
 if __name__ == '__main__':
     manager.run()
