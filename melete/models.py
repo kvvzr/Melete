@@ -1,14 +1,40 @@
-import os, inspect
+import os, inspect, json
 from datetime import datetime
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
+
+import melete.chord as Chord
+import melete.rhythm as Rhythm
 
 app = inspect.getmodule(inspect.stack()[1][0]).app
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
+
+@manager.command
+def seed():
+    "Import system data"
+
+    admin = Users('admin', 'admin')
+    db.session.add(admin)
+    db.session.commit()
+
+    pat = [[], [0], [0, 96], [0, 48, 96], [0, 48, 96, 144]]
+    tree = Rhythm.RhythmTree(48, 1, Rhythm.TimeSignature(4, 2), pat)
+    rhythm = Rhythms('Rhythm 1', json.dumps(tree.to_dict()), admin.id)
+
+    f7 = Chord.Chord.from_name('FM7')
+    gd7 = Chord.Chord.from_name('G7')
+    em7 = Chord.Chord.from_name('Em7')
+    am = Chord.Chord.from_name('Am')
+    prog = Chord.ChordProg(48, 4, [(f7, 0), (gd7, 192), (em7, 384), (am, 576)])
+    chord = Chords('Chord 1', json.dumps(prog.to_dict()), admin.id)
+
+    db.session.add(rhythm)
+    db.session.add(chord)
+    db.session.commit()
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -38,6 +64,11 @@ class Rhythms(db.Model):
     status = db.Column(db.String(255), nullable=True, default=None)
     media_path = db.Column(db.String(255), nullable=True, default=None)
 
+    def __init__(self, name, data, user_id):
+        self.name = name
+        self.data = data
+        self.user_id = user_id
+
 class Chords(db.Model):
     __tablename__ = 'chords'
     id = db.Column(db.Integer, primary_key=True)
@@ -49,6 +80,11 @@ class Chords(db.Model):
     desc = db.Column(db.String(1023), nullable=True, default=None)
     status = db.Column(db.String(255), nullable=True, default=None)
     media_path = db.Column(db.String(255), nullable=True, default=None)
+
+    def __init__(self, name, data, user_id):
+        self.name = name
+        self.data = data
+        self.user_id = user_id
 
 class Accoms(db.Model):
     __tablename__ = 'accoms'
