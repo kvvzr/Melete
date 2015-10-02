@@ -27,6 +27,8 @@ class RhythmTree:
 
     def calc_mora(self):
         lens = map(lambda r: len(r), self.patterns)
+        if not len(lens) == len(list(set(lens))):
+            raise ValueError()
         if len(lens) > 0:
             self.min_mora = min(lens)
             self.max_mora = max(lens)
