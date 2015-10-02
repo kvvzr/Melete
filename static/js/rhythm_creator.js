@@ -64,7 +64,11 @@
                 dd: 2,
                 time: time
             };
-            $.post('/rhythm', {data: JSON.stringify(data)});
+            var title = $('input[name="title"]').val();
+            if (title.length == 0) {
+                return;
+            }
+            $.post('/rhythm', {title: title, data: JSON.stringify(data)});
         });
 
         rhythms = new Array(mora);

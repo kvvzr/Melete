@@ -249,7 +249,7 @@ def rhythm():
         data = json.loads(request.form['data'])
         ts = Rhythm.TimeSignature(int(data['nn']), int(data['dd']))
         tree = Rhythm.RhythmTree(int(data['division']), int(data['time']), ts, data['patterns'])
-        rhythm = Rhythms('Test', json.dumps(tree.to_dict()), user_id)
+        rhythm = Rhythms(request.form['title'], json.dumps(tree.to_dict()), user_id)
         db.session.add(rhythm)
         db.session.commit()
 
