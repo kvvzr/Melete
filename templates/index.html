@@ -41,7 +41,7 @@
     <select id="chords-selector" class="selector">
     {% if chords %}
     {% for sc in chords %}
-    <option data-content="<span data-id=&quot;{{ sc.chords.id }}&quot;>{{ sc.chords.name }}</span>"></option>
+    <option data-content="<span data-id=&quot;{{ sc.id }}&quot;>{{ sc.name }}</span>"></option>
     {% endfor %}
     {% endif %}
     </select>
@@ -50,7 +50,7 @@
     <select id="rhythms-selector" class="selector">
     {% if rhythms %}
     {% for sr in rhythms %}
-    <option data-content="<span data-id=&quot;{{ sr.rhythms.id }}&quot;>{{ sr.rhythms.name }}</span>"></option>
+    <option data-content="<span data-id=&quot;{{ sr.id }}&quot;>{{ sr.name }}</span>"></option>
     {% endfor %}
     {% endif %}
     </select>

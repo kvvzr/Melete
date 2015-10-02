@@ -63,14 +63,22 @@ def index():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
+    rhythms = [Rhythms.query.get(1)]
     stared_rhythms = StaredRhythms.query.filter_by(user_id=session['user_id']).all()
+    for sr in stared_rhythms:
+        rhythms += [sr.rhythms]
+
+    chords = [Chords.query.get(1)]
     stared_chords = StaredChords.query.filter_by(user_id=session['user_id']).all()
+    for sc in stared_chords:
+        chords += [sc.chords]
+
     return render_template(
         'index.html',
         login_icon_path=get_login_icon(),
         user_name=get_user_name(),
-        rhythms=stared_rhythms,
-        chords=stared_chords
+        rhythms=rhythms,
+        chords=chords
     )
 
 @app.route('/watch/<int:id>')
