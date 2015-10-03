@@ -8,6 +8,7 @@
     var time = 1;
 
     var rhythms = [];
+    var playing = [];
 
     $(document).ready(function() {
         initCreator(mora, time);
@@ -73,7 +74,13 @@
             });
         });
 
+        var osc = new p5.SinOsc();
+        var envelope = new p5.Env(0, 1, 0.5);
+        osc.start();
+        envelope.play(osc);
+
         rhythms = new Array(mora);
+        playing = new Array(mora);
         for (var i = 0; i < mora; i++) {
             $container.append('<p>' + (i + 1) + 'モーラ</p>');
             $container.append("<div class='rhythm-creator'></div>");
@@ -83,6 +90,7 @@
             var $node = $rhythm_creators.eq(j);
             new p5(function(p) {
                 p.id = j;
+                p.noteCount = 0;
 
                 p.setup = function() {
                     p.createCanvas($node.width(), $node.height());
@@ -91,9 +99,17 @@
                     for (var i = 0; i < mora * time; i++) {
                         rhythms[p.id][i] = false;
                     }
+                    playing[p.id] = false;
                 };
 
                 p.draw = function() {
+                    if (playing[p.id] && p.frameCount % 20 == 0) {
+                        p.noteCount++;
+                        if (rhythms[p.id][p.noteCount % mora]) {
+                            osc.freq(p.midiToFreq(60));
+                            envelope.play(osc);
+                        }
+                    }
                     p.background(192);
 
                     p.rect(1, 1, p.height - 1, p.height - 2);
@@ -116,6 +132,15 @@
                 };
 
                 p.mousePressed = function() {
+                    if (0 < p.mouseX && p.mouseX < p.height && 0 < p.mouseY && p.mouseY < p.height) {
+                        if (!playing[p.id]) {
+                            for (var k = 0; k < mora; k++) {
+                                playing[k] = false;
+                            }
+                            p.noteCount = 0;
+                        }
+                        playing[p.id] = !playing[p.id];
+                    }
                     for (var i = 0; i < mora * time; i++) {
                         if (i * (p.width - p.height) / (mora * time) + p.height < p.mouseX && p.mouseX < (i + 1) * (p.width - p.height) / (mora * time) + p.height && 1 < p.mouseY && p.mouseY < p.height) {
                             rhythms[p.id][i] = !rhythms[p.id][i];
