@@ -112,9 +112,23 @@ def users(name):
         musics=musics
     )
 
+@app.route('/rhythm_creator')
+def rhythm_creator():
+    return render_template('rhythm_creator.html')
+
 @app.route('/rhythms/<int:id>')
 def rhythms(id):
-    pass
+    rhythm = Rhythms.query.get(id)
+
+    if not rhythm:
+        return ('', 500)
+
+    return render_template(
+        'rhythm.html',
+        login_icon_path=get_login_icon(),
+        user_name=get_user_name(),
+        rhythm=rhythm
+    )
 
 @app.route('/chords/<int:id>')
 def chords(id):
@@ -244,6 +258,48 @@ def compose():
     except KeyError as e:
         return ('Error: %s' % e, 500)
     return (jsonify({'music_id': music.id}), 200)
+
+@app.route('/rhythm', methods=['POST'])
+@login_required
+def rhythm():
+    try:
+        user_id = session['user_id']
+        data = json.loads(request.form['data'])
+        ts = Rhythm.TimeSignature(int(data['nn']), int(data['dd']))
+        tree = Rhythm.RhythmTree(int(data['division']), int(data['time']), ts, data['patterns'])
+        rhythm = Rhythms(request.form['title'], json.dumps(tree.to_dict()), user_id)
+        db.session.add(rhythm)
+        db.session.commit()
+
+        # とりあえず作ったリズムをStarしていく運用
+        sr = StaredRhythms(rhythm.id, user_id)
+        db.session.add(sr)
+        db.session.commit()
+    except ValueError as e:
+        return ('Error: %s' % e, 500)
+    return (jsonify({'rhythm_id': rhythm.id}), 200)
+
+@app.route('/star_rhythm', methods=['POST'])
+@login_required
+def star_rhythm():
+    user_id = session['user_id']
+    rhythm_id = int(request.form['rhythm_id'])
+
+    rhythm = Rhythms.query.get(rhythm_id)
+    if not rhythm:
+        return ('', 500)
+
+    ex_sr = StaredRhythms.query.filter_by(rhythms_id=rhythm_id).filter_by(user_id=user_id).first()
+    if ex_sr:
+        db.session.delete(ex_sr)
+        db.session.commit()
+        return ('', 200)
+
+    sr = StaredRhythms(rhythm_id, user_id)
+    db.session.add(sr)
+    db.session.commit()
+
+    return ('', 200)
 
 if __name__ == '__main__':
     manager.run()

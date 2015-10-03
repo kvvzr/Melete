@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ rhythm.name }} | {% endblock %}
+
+{% block head %}
+    <script src='/static/js/view_rhythm.js'></script>
+{% endblock %}
+
+{% block body %}
+    <div class='melete-form'>
+        <div style='margin: 16px 0 8px 0;'>
+        {% if icon_path %}<img src='/icons/{{ icon_path }}' style='display: inline;' />{% endif %}
+        <h2 style='display: inline; vertical-align: middle; margin-left: 8px;'>
+            {{ rhythm.name }}
+        </h2>
+        <button id='btn-fav' class='btn pull-right' data-id='{{ rhythm.id }}'>お気に入り</button>
+        </div>
+    </div>
+{% endblock %}
