@@ -6,3 +6,4 @@ mido==1.1.12
 sure==1.2.8
 mecab-python
 gunicorn
+git+https://github.com/kvvzr/melete-core
