@@ -13,7 +13,7 @@ import melete.lyrics as Lyrics
 import melete.rhythm as Rhythm
 import melete.chord as Chord
 import melete.melody as Melody
-import melete.util as Util
+import lib.util as Util
 
 app = Flask(__name__)
 app.debug = True
@@ -31,8 +31,8 @@ if not os.path.exists(app.config['ICONS_FOLDER']):
     os.makedirs(app.config['ICONS_FOLDER'])
 
 # router utils
-from melete.models import *
-from melete.login_util import *
+from lib.models import *
+from lib.login_util import *
 
 def get_user_name():
     return session['user_name'] if 'user_name' in session else None
@@ -243,7 +243,7 @@ def compose():
                 bars = Lyrics.divide(tune['phoneme'], rhythm_tree)
                 beats = Lyrics.pair(bars, rhythm_tree)
 
-                composer = Melody.Composer(ts, beats, prog, note_range, skip_prob, bpm)
+                composer = Melody.Composer(ts, beats, prog, note_range, bpm=bpm)
                 midi = Melody.concat_midi(midi, composer.compose())
 
         savepath = Util.random_string(16)
